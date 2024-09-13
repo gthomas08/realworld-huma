@@ -8,6 +8,10 @@ import (
 	pingHttp "github.com/gthomas08/realworld-huma/internal/domain/ping/delivery/http"
 	pingRepository "github.com/gthomas08/realworld-huma/internal/domain/ping/repository"
 	pingUsecase "github.com/gthomas08/realworld-huma/internal/domain/ping/usecase"
+
+	userHttp "github.com/gthomas08/realworld-huma/internal/domain/user/delivery/http"
+	userRepository "github.com/gthomas08/realworld-huma/internal/domain/user/repository"
+	userUsecase "github.com/gthomas08/realworld-huma/internal/domain/user/usecase"
 )
 
 type PingResponse struct {
@@ -31,7 +35,12 @@ func (s *Server) routes() *echo.Echo {
 	pingUc := pingUsecase.NewPingUsecase(pingRepo)
 	pingHandler := pingHttp.NewPingHandler(s.logger, pingUc)
 
+	userRepo := userRepository.NewRepository(s.db)
+	userUc := userUsecase.NewUsecase(userRepo)
+	userHandler := userHttp.NewHandler(s.logger, userUc)
+
 	pingHandler.RegisterPingRoutes(api)
+	userHandler.RegisterRoutes(api)
 
 	return router
 }

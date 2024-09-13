@@ -42,9 +42,9 @@ func main() {
 	// Create a table directly
 	createTableSQL := `
 		CREATE TABLE pings (
-    id INTEGER PRIMARY KEY,
-    message TEXT NOT NULL
-);`
+		id INTEGER PRIMARY KEY,
+		message TEXT NOT NULL
+	);`
 
 	// Execute the SQL statement to create the table
 	if _, err := db.ExecContext(ctx, createTableSQL); err != nil {
