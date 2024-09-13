@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/danielgtaylor/huma/v2/humacli"
+	"github.com/gthomas08/realworld-huma/internal/db/sqlite"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
@@ -19,11 +20,12 @@ type Options struct {
 // Server struct
 type Server struct {
 	logger *logger.Logger
+	db     *sqlite.DB
 }
 
 // NewServer creates new server.
-func NewServer(logger *logger.Logger) *Server {
-	return &Server{logger: logger}
+func NewServer(logger *logger.Logger, db *sqlite.DB) *Server {
+	return &Server{logger: logger, db: db}
 }
 
 func (s *Server) Run() {

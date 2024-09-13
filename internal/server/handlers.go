@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	pingHttp "github.com/gthomas08/realworld-huma/internal/domain/ping/delivery/http"
+	pingRepository "github.com/gthomas08/realworld-huma/internal/domain/ping/repository"
 	pingUsecase "github.com/gthomas08/realworld-huma/internal/domain/ping/usecase"
 )
 
@@ -26,7 +27,8 @@ func (s *Server) routes() *echo.Echo {
 
 	api := humaecho.New(router, huma.DefaultConfig("My API", "1.0.0"))
 
-	pingUc := pingUsecase.NewPingUsecase()
+	pingRepo := pingRepository.NewPingRepository(s.db)
+	pingUc := pingUsecase.NewPingUsecase(pingRepo)
 	pingHandler := pingHttp.NewPingHandler(s.logger, pingUc)
 
 	pingHandler.RegisterPingRoutes(api)

@@ -1,9 +1,11 @@
 version: "2"
 sql:
   - engine: "sqlite"
-    queries: "query.sql"
-    schema: "schema.sql"
+    queries: "internal/domain/ping/repository/sqlc/queries"
+    schema: "migrations/"
+    name: "repo"
     gen:
       go:
-        package: "tutorial"
-        out: "tutorial"
+        package: "sqlc"
+        out: "internal/domain/ping/repository/sqlc"
+        emit_interface: true

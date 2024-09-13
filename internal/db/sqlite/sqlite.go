@@ -3,7 +3,7 @@ package sqlite
 import (
 	"database/sql"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // DB wraps the sql.DB struct
@@ -11,10 +11,10 @@ type DB struct {
 	Conn *sql.DB
 }
 
-// NewSQLiteDB initializes a new SQLite database
+// NewSQLiteDB initializes a new SQLite database using github.com/mattn/go-sqlite3
 func NewSQLiteDB(dbPath string) (*DB, error) {
 	// Open the SQLite database
-	db, err := sql.Open("sqlite", dbPath)
+	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, err
 	}
