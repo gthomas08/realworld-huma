@@ -17,18 +17,16 @@ type Options struct {
 	Env  string `help:"Environment (dev|staging|prod)" short:"e" default:"dev" enum:"dev|staging|prod"`
 }
 
-// Server struct
-type Server struct {
+type App struct {
 	logger *logger.Logger
 	db     *sqlite.DB
 }
 
-// NewServer creates new server.
-func NewServer(logger *logger.Logger, db *sqlite.DB) *Server {
-	return &Server{logger: logger, db: db}
+func NewApp(logger *logger.Logger, db *sqlite.DB) *App {
+	return &App{logger: logger, db: db}
 }
 
-func (s *Server) Run() {
+func (app *App) Run() {
 	// Create a CLI app with the provided options.
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
 		// Set up the logger.
@@ -37,7 +35,7 @@ func (s *Server) Run() {
 		// Set up the HTTP server with the application's routes and sensible timeout settings.
 		server := &http.Server{
 			Addr:         fmt.Sprintf(":%d", options.Port),
-			Handler:      s.routes(),
+			Handler:      app.routes(),
 			IdleTimeout:  time.Minute,
 			ReadTimeout:  5 * time.Second,
 			WriteTimeout: 10 * time.Second,

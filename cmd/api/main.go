@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
+	server "github.com/gthomas08/realworld-huma/internal/app"
 	"github.com/gthomas08/realworld-huma/internal/db/sqlite"
-	"github.com/gthomas08/realworld-huma/internal/server"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
@@ -54,7 +54,7 @@ func main() {
 
 	fmt.Println("Table created successfully!")
 
-	s := server.NewServer(appLogger, &test)
+	app := server.NewApp(appLogger, &test)
 
-	s.Run()
+	app.Run()
 }

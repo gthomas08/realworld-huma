@@ -20,7 +20,7 @@ type PingResponse struct {
 	}
 }
 
-func (s *Server) routes() *echo.Echo {
+func (a *App) routes() *echo.Echo {
 	router := echo.New()
 	// router.Use(
 	// 	middleware.Recoverer, // Handles panics
@@ -31,13 +31,13 @@ func (s *Server) routes() *echo.Echo {
 
 	api := humaecho.New(router, huma.DefaultConfig("My API", "1.0.0"))
 
-	pingRepo := pingRepository.NewPingRepository(s.db)
+	pingRepo := pingRepository.NewPingRepository(a.db)
 	pingUc := pingUsecase.NewPingUsecase(pingRepo)
-	pingHandler := pingHttp.NewPingHandler(s.logger, pingUc)
+	pingHandler := pingHttp.NewPingHandler(a.logger, pingUc)
 
-	userRepo := userRepository.NewRepository(s.db)
+	userRepo := userRepository.NewRepository(a.db)
 	userUc := userUsecase.NewUsecase(userRepo)
-	userHandler := userHttp.NewHandler(s.logger, userUc)
+	userHandler := userHttp.NewHandler(a.logger, userUc)
 
 	pingHandler.RegisterPingRoutes(api)
 	userHandler.RegisterRoutes(api)
