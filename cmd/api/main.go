@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	server "github.com/gthomas08/realworld-huma/internal/app"
+	"github.com/gthomas08/realworld-huma/internal/app"
 	"github.com/gthomas08/realworld-huma/internal/db/sqlite"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
@@ -31,7 +31,7 @@ func main() {
 
 	appLogger.Info("Connected to the database")
 
-	app := server.NewApp(appLogger, db)
+	apiApp := app.NewApp(appLogger, db)
 
-	app.Run()
+	apiApp.Run()
 }
