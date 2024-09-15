@@ -2,59 +2,36 @@ package main
 
 import (
 	"context"
-	"database/sql"
-	"fmt"
 
 	server "github.com/gthomas08/realworld-huma/internal/app"
 	"github.com/gthomas08/realworld-huma/internal/db/sqlite"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
-type DB struct {
-	Conn *sql.DB
-}
-
 // main is the entrypoint for the application.
 func main() {
 	// Create a logger.
 	appLogger := logger.NewLogger()
 
-	// // Initialize the SQLite database
-	// db, err := sqlite.NewSQLiteDB("dadw")
-	// if err != nil {
-	// 	appLogger.Error("Failed to initialize the database", "error", err)
-	// }
-	// defer db.Close()
-
-	// Open an in-memory SQLite database
-	db, err := sql.Open("sqlite3", ":memory:")
+	// Initialize the SQLite database
+	db, err := sqlite.NewSQLiteDB("main.db")
 	if err != nil {
-		fmt.Println("Error opening database:", err)
-		return
+		appLogger.Error("Failed to initialize the database", "error", err)
 	}
 	defer db.Close()
-
-	test := sqlite.DB{Conn: db}
 
 	// Context
 	ctx := context.Background()
 
-	// Create a table directly
-	createTableSQL := `
-		CREATE TABLE pings (
-		id INTEGER PRIMARY KEY,
-		message TEXT NOT NULL
-	);`
-
-	// Execute the SQL statement to create the table
-	if _, err := db.ExecContext(ctx, createTableSQL); err != nil {
-		fmt.Println("Error creating table:", err)
+	// Check if the connection is valid
+	if err := db.Conn.PingContext(ctx); err != nil {
+		appLogger.Error("Failed to connect to the database", "error", err)
 		return
 	}
 
-	fmt.Println("Table created successfully!")
+	appLogger.Info("Connected to the database")
 
-	app := server.NewApp(appLogger, &test)
+	app := server.NewApp(appLogger, db)
 
 	app.Run()
 }

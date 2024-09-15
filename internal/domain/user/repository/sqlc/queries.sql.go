@@ -10,7 +10,7 @@ import (
 	"database/sql"
 )
 
-const createUser = `-- name: CreateUser :exec
+const createUser = `-- name: CreateUser :one
 INSERT INTO
     users (email, username, password, bio, image)
 VALUES
@@ -25,13 +25,15 @@ type CreateUserParams struct {
 	Image    sql.NullString
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
-	_, err := q.db.ExecContext(ctx, createUser,
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, createUser,
 		arg.Email,
 		arg.Username,
 		arg.Password,
 		arg.Bio,
 		arg.Image,
 	)
-	return err
+	var id int64
+	err := row.Scan(&id)
+	return id, err
 }

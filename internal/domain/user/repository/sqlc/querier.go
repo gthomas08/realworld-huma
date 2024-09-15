@@ -9,7 +9,7 @@ import (
 )
 
 type Querier interface {
-	CreateUser(ctx context.Context, arg CreateUserParams) error
+	CreateUser(ctx context.Context, arg CreateUserParams) (int64, error)
 }
 
 var _ Querier = (*Queries)(nil)

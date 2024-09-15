@@ -7,5 +7,5 @@ import (
 )
 
 type Usecase interface {
-	CreateUser(ctx context.Context, input *dtos.CreateUserRequest) int
+	CreateUser(ctx context.Context, input *dtos.CreateUserRequest) int64
 }

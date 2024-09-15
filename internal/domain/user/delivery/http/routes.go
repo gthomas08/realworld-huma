@@ -11,7 +11,7 @@ import (
 
 type CreateUserResponse struct {
 	Body struct {
-		Id int `json:"message" example:"2" doc:"Ping message"`
+		Id int64 `json:"message" example:"2" doc:"Ping message"`
 	}
 }
 
