@@ -7,8 +7,8 @@ import (
 
 func NewCreateUserParams(cur dtos.CreateUserRequest) sqlc.CreateUserParams {
 	return sqlc.CreateUserParams{
-		Email:    cur.Body.Email,
-		Username: cur.Body.Username,
-		Password: cur.Body.Password,
+		Email:    cur.Email,
+		Username: cur.Username,
+		Password: cur.Password,
 	}
 }
