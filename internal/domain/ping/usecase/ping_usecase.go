@@ -15,9 +15,5 @@ func NewPingUsecase(pingRepository ping.Repository) ping.Usecase {
 }
 
 func (uc *pingUsecase) GetPingMessage(ctx context.Context) string {
-	res, err := uc.pingRepository.GetPingMessage(ctx)
-	if err != nil {
-		return "Entity not found"
-	}
-	return res
+	return "2"
 }
