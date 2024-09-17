@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/danielgtaylor/huma/v2/humacli"
-	"github.com/gthomas08/realworld-huma/internal/db/sqlite"
+	"github.com/gthomas08/realworld-huma/internal/db/postgres"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
@@ -19,10 +19,10 @@ type Options struct {
 
 type App struct {
 	logger *logger.Logger
-	db     *sqlite.DB
+	db     *postgres.DB
 }
 
-func NewApp(logger *logger.Logger, db *sqlite.DB) *App {
+func NewApp(logger *logger.Logger, db *postgres.DB) *App {
 	return &App{logger: logger, db: db}
 }
 

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/gthomas08/realworld-huma/internal/app"
-	"github.com/gthomas08/realworld-huma/internal/db/sqlite"
+	"github.com/gthomas08/realworld-huma/internal/db/postgres"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
@@ -14,7 +14,7 @@ func main() {
 	appLogger := logger.NewLogger()
 
 	// Initialize the SQLite database
-	db, err := sqlite.NewSQLiteDB("main.db")
+	db, err := postgres.NewDB("localhost", "5432", "admin", "root", "postgres")
 	if err != nil {
 		appLogger.Error("Failed to initialize the database", "error", err)
 	}
