@@ -32,11 +32,15 @@ func (r *repository) GetUser(ctx context.Context) (*model.Users, error) {
 	return &user, err
 }
 
-func (r *repository) CreateUser(ctx context.Context, user *model.Users) error {
+func (r *repository) CreateUser(ctx context.Context, user *model.Users) (*model.Users, error) {
+	var dest model.Users
+
 	insertStmt := Users.
 		INSERT(Users.ID, Users.Username, Users.Email, Users.Password).
-		MODEL(user)
+		MODEL(user).
+		RETURNING(Users.ID, Users.Username, Users.Email, Users.Bio, Users.Image)
 
-	_, err := insertStmt.ExecContext(ctx, r.db.Conn)
-	return err
+	err := insertStmt.QueryContext(ctx, r.db.Conn, &dest)
+
+	return &dest, err
 }

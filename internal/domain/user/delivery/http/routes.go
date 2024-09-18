@@ -16,10 +16,10 @@ func (h *userHandler) RegisterRoutes(api huma.API) {
 		Method:      http.MethodPost,
 		Path:        "/api/users",
 		Summary:     "Registers a new user",
-	}, func(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[dtos.CreateUserResponse], error) {
-		var resp types.ResponseBody[dtos.CreateUserResponse]
+	}, func(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[dtos.User], error) {
+		var resp types.ResponseBody[dtos.User]
 
-		resp.Body.Id = h.CreateUser(ctx, &input.Body)
+		resp.Body = *h.CreateUser(ctx, &input.Body)
 
 		return &resp, nil
 	})

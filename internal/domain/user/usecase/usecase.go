@@ -17,12 +17,19 @@ func NewUsecase(userRepository user.Repository) user.Usecase {
 	return &userUsecase{userRepository: userRepository}
 }
 
-func (uc *userUsecase) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) int64 {
-	uc.userRepository.CreateUser(ctx, &model.Users{
+func (uc *userUsecase) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) *dtos.User {
+	user, _ := uc.userRepository.CreateUser(ctx, &model.Users{
 		ID:       uuid.New(),
 		Username: input.Username,
 		Email:    input.Email,
 		Password: input.Password,
 	})
-	return -2
+
+	return &dtos.User{
+		Id:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		Bio:      user.Bio,
+		Image:    user.Image,
+	}
 }

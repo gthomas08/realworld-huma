@@ -7,5 +7,5 @@ import (
 )
 
 type Repository interface {
-	CreateUser(ctx context.Context, user *model.Users) error
+	CreateUser(ctx context.Context, user *model.Users) (*model.Users, error)
 }

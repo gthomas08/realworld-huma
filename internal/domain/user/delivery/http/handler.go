@@ -17,8 +17,8 @@ func NewHandler(logger *logger.Logger, userUsecase user.Usecase) *userHandler {
 	return &userHandler{logger: logger, userUsecase: userUsecase}
 }
 
-func (uh *userHandler) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) int64 {
-	id := uh.userUsecase.CreateUser(ctx, input)
+func (uh *userHandler) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) *dtos.User {
+	user := uh.userUsecase.CreateUser(ctx, input)
 
-	return id
+	return user
 }
