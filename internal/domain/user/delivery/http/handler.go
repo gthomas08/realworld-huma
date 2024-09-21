@@ -23,13 +23,13 @@ type UserResponse struct {
 }
 
 func (h *userHandler) CreateUser(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[UserResponse], error) {
-	var resp types.ResponseBody[UserResponse]
+	createdUser := h.userUsecase.CreateUser(ctx, &input.Body)
 
-	user := UserResponse{
-		User: h.userUsecase.CreateUser(ctx, &input.Body),
+	resp := &types.ResponseBody[UserResponse]{
+		Body: UserResponse{
+			User: createdUser,
+		},
 	}
 
-	resp.Body = user
-
-	return &resp, nil
+	return resp, nil
 }
