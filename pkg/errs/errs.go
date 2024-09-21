@@ -1,8 +1,6 @@
 package errs
 
 import (
-	"fmt"
-
 	"github.com/danielgtaylor/huma/v2"
 )
 
@@ -38,18 +36,22 @@ func NewError(status int, message string, errs ...error) huma.StatusError {
 	}
 }
 
+func InternalServerError() huma.StatusError {
+	return huma.Error500InternalServerError("internal server error")
+}
+
 func Error401Unauthorized() huma.StatusError {
-	return huma.Error401Unauthorized("unauthorized", fmt.Errorf("unauthorized"))
+	return huma.Error401Unauthorized("unauthorized")
 }
 
 func Error403Forbidden() huma.StatusError {
-	return huma.Error403Forbidden("forbidden", fmt.Errorf("forbidden"))
+	return huma.Error403Forbidden("forbidden")
 }
 
 func Error404NotFound() huma.StatusError {
-	return huma.Error404NotFound("not found", fmt.Errorf("not found"))
+	return huma.Error404NotFound("not found")
 }
 
 func Error422UnprocessableEntity() huma.StatusError {
-	return huma.Error422UnprocessableEntity("unprocessable entity", fmt.Errorf("unprocessable entity"))
+	return huma.Error422UnprocessableEntity("unprocessable entity")
 }

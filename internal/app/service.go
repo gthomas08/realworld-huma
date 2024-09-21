@@ -36,7 +36,7 @@ func (a *App) routes() *echo.Echo {
 	pingHandler := pingHttp.NewPingHandler(a.logger, pingUc)
 
 	userRepo := userRepository.NewRepository(a.db)
-	userUc := userUsecase.NewUsecase(userRepo)
+	userUc := userUsecase.NewUsecase(a.logger, userRepo)
 	userHandler := userHttp.NewHandler(a.logger, userUc)
 
 	pingHandler.RegisterPingRoutes(api)

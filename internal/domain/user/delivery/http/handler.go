@@ -23,7 +23,10 @@ type CreateUserResponse struct {
 }
 
 func (h *userHandler) CreateUser(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[CreateUserResponse], error) {
-	createdUser := h.userUsecase.CreateUser(ctx, &input.Body)
+	createdUser, err := h.userUsecase.CreateUser(ctx, &input.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	resp := &types.ResponseBody[CreateUserResponse]{
 		Body: CreateUserResponse{
