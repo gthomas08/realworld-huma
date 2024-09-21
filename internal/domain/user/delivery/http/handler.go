@@ -18,15 +18,15 @@ func NewHandler(logger *logger.Logger, userUsecase user.Usecase) *userHandler {
 	return &userHandler{logger: logger, userUsecase: userUsecase}
 }
 
-type UserResponse struct {
+type CreateUserResponse struct {
 	User *dtos.User `json:"user" doc:"The created user"`
 }
 
-func (h *userHandler) CreateUser(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[UserResponse], error) {
+func (h *userHandler) CreateUser(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[CreateUserResponse], error) {
 	createdUser := h.userUsecase.CreateUser(ctx, &input.Body)
 
-	resp := &types.ResponseBody[UserResponse]{
-		Body: UserResponse{
+	resp := &types.ResponseBody[CreateUserResponse]{
+		Body: CreateUserResponse{
 			User: createdUser,
 		},
 	}

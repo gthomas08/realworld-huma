@@ -3,10 +3,9 @@ package usecase
 import (
 	"context"
 
-	"github.com/google/uuid"
-	"github.com/gthomas08/realworld-huma/internal/db/postgres/jet/postgres/public/model"
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/dtos"
+	"github.com/gthomas08/realworld-huma/internal/domain/user/mapper"
 )
 
 type userUsecase struct {
@@ -18,18 +17,7 @@ func NewUsecase(userRepository user.Repository) user.Usecase {
 }
 
 func (uc *userUsecase) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) *dtos.User {
-	user, _ := uc.userRepository.CreateUser(ctx, &model.Users{
-		ID:       uuid.New(),
-		Username: input.Username,
-		Email:    input.Email,
-		Password: input.Password,
-	})
+	user, _ := uc.userRepository.CreateUser(ctx, mapper.CreateUserRequestToUserModel(input))
 
-	return &dtos.User{
-		Id:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
-		Bio:      user.Bio,
-		Image:    user.Image,
-	}
+	return mapper.UserModelToUser(user)
 }
