@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/humacli"
 	"github.com/gthomas08/realworld-huma/internal/db/postgres"
+	"github.com/gthomas08/realworld-huma/pkg/errs"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
@@ -31,6 +33,9 @@ func (app *App) Run() {
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
 		// Set up the logger.
 		logger := logger.NewLogger()
+
+		// Set up the error handler.
+		huma.NewError = errs.NewError
 
 		// Set up the HTTP server with the application's routes and sensible timeout settings.
 		server := &http.Server{
