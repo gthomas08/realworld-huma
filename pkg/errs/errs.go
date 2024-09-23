@@ -1,7 +1,16 @@
 package errs
 
 import (
+	"fmt"
+
 	"github.com/danielgtaylor/huma/v2"
+)
+
+var (
+	ErrUnauthorized = fmt.Errorf("unauthorized access")
+	ErrBadRequest   = fmt.Errorf("bad request")
+	ErrNotFound     = fmt.Errorf("resource not found")
+	ErrInternal     = fmt.Errorf("internal server error")
 )
 
 type Errors struct {
@@ -36,22 +45,18 @@ func NewError(status int, message string, errs ...error) huma.StatusError {
 	}
 }
 
-func InternalServerError() huma.StatusError {
-	return huma.Error500InternalServerError("internal server error")
-}
-
-func Error401Unauthorized() huma.StatusError {
-	return huma.Error401Unauthorized("unauthorized")
-}
-
-func Error403Forbidden() huma.StatusError {
-	return huma.Error403Forbidden("forbidden")
-}
-
-func Error404NotFound() huma.StatusError {
-	return huma.Error404NotFound("not found")
-}
-
-func Error422UnprocessableEntity() huma.StatusError {
-	return huma.Error422UnprocessableEntity("unprocessable entity")
+// NewAppError converts an application error to a StatusError for Huma.
+func NewAppError(err error) huma.StatusError {
+	switch err {
+	case ErrUnauthorized:
+		return huma.Error401Unauthorized(err.Error())
+	case ErrBadRequest:
+		return huma.Error400BadRequest(err.Error())
+	case ErrNotFound:
+		return huma.Error404NotFound(err.Error())
+	case ErrInternal:
+		return huma.Error500InternalServerError(err.Error())
+	default:
+		return huma.Error500InternalServerError(ErrInternal.Error())
+	}
 }
