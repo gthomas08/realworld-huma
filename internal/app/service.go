@@ -14,13 +14,7 @@ import (
 	userUsecase "github.com/gthomas08/realworld-huma/internal/domain/user/usecase"
 )
 
-type PingResponse struct {
-	Body struct {
-		Message string `json:"message" example:"Pong!" doc:"Ping message"`
-	}
-}
-
-func (a *App) routes() *echo.Echo {
+func (app *App) routes() *echo.Echo {
 	router := echo.New()
 	// router.Use(
 	// 	middleware.Recoverer, // Handles panics
@@ -29,15 +23,15 @@ func (a *App) routes() *echo.Echo {
 	// 	// Add more global middleware here
 	// )
 
-	api := humaecho.New(router, huma.DefaultConfig("My API", "1.0.0"))
+	api := humaecho.New(router, huma.DefaultConfig(app.cfg.App.Name, app.cfg.App.Version))
 
-	pingRepo := pingRepository.NewPingRepository(a.db)
+	pingRepo := pingRepository.NewPingRepository(app.db)
 	pingUc := pingUsecase.NewPingUsecase(pingRepo)
-	pingHandler := pingHttp.NewPingHandler(a.logger, pingUc)
+	pingHandler := pingHttp.NewPingHandler(app.logger, pingUc)
 
-	userRepo := userRepository.NewRepository(a.db)
-	userUc := userUsecase.NewUsecase(a.logger, userRepo)
-	userHandler := userHttp.NewHandler(a.logger, userUc)
+	userRepo := userRepository.NewRepository(app.db)
+	userUc := userUsecase.NewUsecase(app.logger, userRepo)
+	userHandler := userHttp.NewHandler(app.logger, userUc)
 
 	pingHandler.RegisterPingRoutes(api)
 	userHandler.RegisterRoutes(api)

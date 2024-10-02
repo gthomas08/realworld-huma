@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/gthomas08/realworld-huma/config"
 	"github.com/gthomas08/realworld-huma/internal/app"
 	"github.com/gthomas08/realworld-huma/internal/db/postgres"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
@@ -13,8 +14,14 @@ func main() {
 	// Create a logger.
 	appLogger := logger.NewLogger()
 
-	// Initialize the SQLite database
-	db, err := postgres.NewDB("localhost", "5432", "admin", "root", "postgres")
+	// Load the application configuration from the specified directory.
+	cfg, err := config.LoadConfig("config")
+	if err != nil {
+		appLogger.Panic("Failed to load the configuration", "error", err)
+	}
+
+	// Initialize the PostgreSQL database
+	db, err := postgres.NewDB(cfg.Database)
 	if err != nil {
 		appLogger.Error("Failed to initialize the database", "error", err)
 	}
@@ -31,7 +38,7 @@ func main() {
 
 	appLogger.Info("Connected to the database")
 
-	apiApp := app.NewApp(appLogger, db)
+	apiApp := app.NewApp(cfg, appLogger, db)
 
 	apiApp.Run()
 }

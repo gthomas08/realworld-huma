@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/gthomas08/realworld-huma/config"
 	_ "github.com/lib/pq"
 )
 
@@ -12,10 +13,10 @@ type DB struct {
 	Conn *sql.DB
 }
 
-// NewDB initializes a new PostgreSQL database connection using github.com/lib/pq
-func NewDB(host, port, user, password, dbname string) (*DB, error) {
+// NewDB initializes a new PostgreSQL database connection.
+func NewDB(dbConfig config.DatabaseConfig) (*DB, error) {
 	// Format the connection string
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", dbConfig.Host, dbConfig.Port, dbConfig.User, dbConfig.Password, dbConfig.Name)
 
 	// Open the PostgreSQL database connection
 	db, err := sql.Open("postgres", connStr)

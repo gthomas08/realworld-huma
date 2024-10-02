@@ -8,24 +8,23 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/humacli"
+	"github.com/gthomas08/realworld-huma/config"
 	"github.com/gthomas08/realworld-huma/internal/db/postgres"
 	"github.com/gthomas08/realworld-huma/pkg/errs"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
 // Options contains all the configurable options for the application.
-type Options struct {
-	Port int    `help:"Port to listen on" short:"p" default:"8888"`
-	Env  string `help:"Environment (dev|staging|prod)" short:"e" default:"dev" enum:"dev|staging|prod"`
-}
+type Options struct{}
 
 type App struct {
+	cfg    *config.Config
 	logger *logger.Logger
 	db     *postgres.DB
 }
 
-func NewApp(logger *logger.Logger, db *postgres.DB) *App {
-	return &App{logger: logger, db: db}
+func NewApp(cfg *config.Config, logger *logger.Logger, db *postgres.DB) *App {
+	return &App{cfg: cfg, logger: logger, db: db}
 }
 
 func (app *App) Run() {
@@ -39,7 +38,7 @@ func (app *App) Run() {
 
 		// Set up the HTTP server with the application's routes and sensible timeout settings.
 		server := &http.Server{
-			Addr:         fmt.Sprintf(":%d", options.Port),
+			Addr:         fmt.Sprintf(":%d", app.cfg.Server.Port),
 			Handler:      app.routes(),
 			IdleTimeout:  time.Minute,
 			ReadTimeout:  5 * time.Second,
@@ -49,7 +48,7 @@ func (app *App) Run() {
 
 		// Hook to start the server.
 		hooks.OnStart(func() {
-			logger.Info("Starting server", "port", options.Port, "env", options.Env)
+			logger.Info("Starting server", "port", app.cfg.Server.Port, "env", app.cfg.App.Env)
 			if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 				logger.Error("Failed to start server", "error", err)
 			}

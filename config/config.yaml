@@ -1,0 +1,14 @@
+App:
+  Name: "realworld-huma"
+  Version: "v1.0.0"
+  Env: local # local, dev, staging, prod
+
+Server:
+  Port: 8000
+
+Database:
+  Host: localhost
+  Port: 5432
+  Name: postgres
+  User: admin
+  Password: root
