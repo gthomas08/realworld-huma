@@ -22,7 +22,7 @@ func NewUsecase(logger *logger.Logger, userRepository user.Repository) user.Usec
 func (uc *userUsecase) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) (*dtos.User, error) {
 	user, err := uc.userRepository.CreateUser(ctx, mapper.CreateUserRequestToUserModel(input))
 	if err != nil {
-		uc.logger.Error("failed to create user", "error", err.Error())
+		uc.logger.Error("failed to create user", "error", err)
 		return nil, errs.NewAppError(errs.ErrInternal)
 	}
 

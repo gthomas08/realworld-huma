@@ -48,9 +48,9 @@ func (app *App) Run() {
 
 		// Hook to start the server.
 		hooks.OnStart(func() {
-			logger.Info("Starting server", "port", app.cfg.Server.Port, "env", app.cfg.App.Env)
+			logger.Info("starting server", "port", app.cfg.Server.Port, "env", app.cfg.App.Env)
 			if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-				logger.Error("Failed to start server", "error", err)
+				logger.Error("failed to start server", "error", err)
 			}
 		})
 
@@ -60,7 +60,7 @@ func (app *App) Run() {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			if err := server.Shutdown(ctx); err != nil {
-				logger.Error("Failed to shutdown server", "error", err)
+				logger.Error("failed to shutdown server", "error", err)
 			}
 		})
 	})
