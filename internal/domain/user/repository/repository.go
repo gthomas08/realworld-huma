@@ -20,12 +20,13 @@ func NewRepository(db *postgres.DB) user.Repository {
 	return &repository{db: db}
 }
 
-func (r *repository) GetUser(ctx context.Context) (*model.Users, error) {
+func (r *repository) GetUserByEmailOrUsername(ctx context.Context, email string, username string) (*model.Users, error) {
 	var user model.Users
 
-	stmt := SELECT(Users.AllColumns).
+	stmt := SELECT(Users.ID, Users.Username, Users.Email, Users.Bio, Users.Image).
 		FROM(Users).
-		ORDER_BY(Users.ID.DESC())
+		WHERE(OR(Users.Email.EQ(String(email)), Users.Username.EQ(String(username)))).
+		LIMIT(1)
 
 	err := stmt.QueryContext(ctx, r.db.Conn, &user)
 
