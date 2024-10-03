@@ -22,13 +22,12 @@ func NewUsecase(logger *logger.Logger, userRepository user.Repository) user.Usec
 func (uc *userUsecase) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) (*dtos.User, error) {
 	// Check if user already exists based on email or username
 	if _, err := uc.userRepository.GetUserByEmailOrUsername(ctx, input.Email, input.Username); err == nil {
-		return nil, errs.NewAppError(errs.ErrEntityExists)
+		return nil, errs.NewAppError(errs.ErrEntityExists, "user with given email or username already exists")
 	}
 
 	user, err := uc.userRepository.CreateUser(ctx, mapper.CreateUserRequestToUserModel(input))
 	if err != nil {
-		uc.logger.Error("failed to create user", "error", err)
-		return nil, errs.NewHTTPError(errs.ErrInternal)
+		return nil, errs.NewAppError(errs.ErrInternal, "failed to create user")
 	}
 
 	return mapper.UserModelToUser(user), nil
