@@ -8,6 +8,7 @@ import (
 	pingHttp "github.com/gthomas08/realworld-huma/internal/domain/ping/delivery/http"
 	pingRepository "github.com/gthomas08/realworld-huma/internal/domain/ping/repository"
 	pingUsecase "github.com/gthomas08/realworld-huma/internal/domain/ping/usecase"
+	"github.com/gthomas08/realworld-huma/internal/middlewares"
 
 	userHttp "github.com/gthomas08/realworld-huma/internal/domain/user/delivery/http"
 	userRepository "github.com/gthomas08/realworld-huma/internal/domain/user/repository"
@@ -22,6 +23,8 @@ func (app *App) routes() *echo.Echo {
 	// 	middleware.Logger,    // Logs each request
 	// 	// Add more global middleware here
 	// )
+
+	router.Use(middlewares.RequestLoggerMiddleware(app.logger))
 
 	api := humaecho.New(router, huma.DefaultConfig(app.cfg.App.Name, app.cfg.App.Version))
 
