@@ -5,10 +5,12 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humaecho"
 	"github.com/labstack/echo/v4"
 
+	"github.com/gthomas08/realworld-huma/internal/middlewares"
+	"github.com/gthomas08/realworld-huma/pkg/errs"
+
 	pingHttp "github.com/gthomas08/realworld-huma/internal/domain/ping/delivery/http"
 	pingRepository "github.com/gthomas08/realworld-huma/internal/domain/ping/repository"
 	pingUsecase "github.com/gthomas08/realworld-huma/internal/domain/ping/usecase"
-	"github.com/gthomas08/realworld-huma/internal/middlewares"
 
 	userHttp "github.com/gthomas08/realworld-huma/internal/domain/user/delivery/http"
 	userRepository "github.com/gthomas08/realworld-huma/internal/domain/user/repository"
@@ -24,9 +26,11 @@ func (app *App) routes() *echo.Echo {
 	// 	// Add more global middleware here
 	// )
 
-	router.Use(middlewares.RequestLoggerMiddleware(app.logger))
-
 	api := humaecho.New(router, huma.DefaultConfig(app.cfg.App.Name, app.cfg.App.Version))
+
+	huma.NewError = errs.NewError
+
+	router.Use(middlewares.RequestLoggerMiddleware(app.logger))
 
 	pingRepo := pingRepository.NewPingRepository(app.db)
 	pingUc := pingUsecase.NewPingUsecase(pingRepo)

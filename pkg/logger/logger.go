@@ -110,11 +110,5 @@ func pairs(keysAndValues []any) []any {
 		num--
 		fields = fields[:num]
 	}
-	// Convert error values to their string representation
-	for i := 1; i < num; i += 2 {
-		if err, ok := fields[i].(error); ok {
-			fields[i] = err.Error()
-		}
-	}
 	return fields
 }

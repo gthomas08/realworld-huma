@@ -6,11 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/humacli"
 	"github.com/gthomas08/realworld-huma/config"
 	"github.com/gthomas08/realworld-huma/internal/db/postgres"
-	"github.com/gthomas08/realworld-huma/pkg/errs"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
@@ -30,12 +28,6 @@ func NewApp(cfg *config.Config, logger *logger.Logger, db *postgres.DB) *App {
 func (app *App) Run() {
 	// Create a CLI app with the provided options.
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
-		// Set up the logger.
-		logger := logger.NewLogger()
-
-		// Set up the error handler.
-		huma.NewError = errs.NewError
-
 		// Set up the HTTP server with the application's routes and sensible timeout settings.
 		server := &http.Server{
 			Addr:         fmt.Sprintf(":%d", app.cfg.Server.Port),
@@ -43,14 +35,14 @@ func (app *App) Run() {
 			IdleTimeout:  time.Minute,
 			ReadTimeout:  5 * time.Second,
 			WriteTimeout: 10 * time.Second,
-			ErrorLog:     logger.NewLogLogger(),
+			ErrorLog:     app.logger.NewLogLogger(),
 		}
 
 		// Hook to start the server.
 		hooks.OnStart(func() {
-			logger.Info("starting server", "port", app.cfg.Server.Port, "env", app.cfg.App.Env)
+			app.logger.Info("starting server", "port", app.cfg.Server.Port, "env", app.cfg.App.Env)
 			if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-				logger.Error("failed to start server", "error", err)
+				app.logger.Error("failed to start server", "error", err.Error())
 			}
 		})
 
@@ -60,7 +52,7 @@ func (app *App) Run() {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			if err := server.Shutdown(ctx); err != nil {
-				logger.Error("failed to shutdown server", "error", err)
+				app.logger.Error("failed to shutdown server", "error", err.Error())
 			}
 		})
 	})
