@@ -19,18 +19,20 @@ import (
 
 func (app *App) routes() *echo.Echo {
 	router := echo.New()
+	router.Use(middlewares.RequestLoggerMiddleware(app.logger))
+
+	api := humaecho.New(router, huma.DefaultConfig(app.cfg.App.Name, app.cfg.App.Version))
+	api.UseMiddleware(func(ctx huma.Context, next func(huma.Context)) {
+		middlewares.RecoverMiddleware(app.logger, api, ctx, next)
+	})
+	huma.NewError = errs.NewError
+
 	// router.Use(
 	// 	middleware.Recoverer, // Handles panics
 	// 	middleware.RequestID, // Adds a unique request ID
 	// 	middleware.Logger,    // Logs each request
 	// 	// Add more global middleware here
 	// )
-
-	api := humaecho.New(router, huma.DefaultConfig(app.cfg.App.Name, app.cfg.App.Version))
-
-	huma.NewError = errs.NewError
-
-	router.Use(middlewares.RequestLoggerMiddleware(app.logger))
 
 	pingRepo := pingRepository.NewPingRepository(app.db)
 	pingUc := pingUsecase.NewPingUsecase(pingRepo)
