@@ -18,6 +18,10 @@ const (
 	ErrUnprocessableEntity  HTTPError = http.StatusUnprocessableEntity
 	ErrTooManyRequests      HTTPError = http.StatusTooManyRequests
 	ErrInternal             HTTPError = http.StatusInternalServerError
+	ErrNotImplemented       HTTPError = http.StatusNotImplemented
+	ErrBadGateway           HTTPError = http.StatusBadGateway
+	ErrServiceUnavailable   HTTPError = http.StatusServiceUnavailable
+	ErrGatewayTimeout       HTTPError = http.StatusGatewayTimeout
 )
 
 func (he HTTPError) String() string {
@@ -42,4 +46,8 @@ var httpCodeNames = [...]string{
 	ErrUnprocessableEntity:  "unprocessable_entity",
 	ErrTooManyRequests:      "too_many_requests",
 	ErrInternal:             "internal_server_error",
+	ErrNotImplemented:       "not_implemented",
+	ErrBadGateway:           "bad_gateway",
+	ErrServiceUnavailable:   "service_unavailable",
+	ErrGatewayTimeout:       "gateway_timeout",
 }
