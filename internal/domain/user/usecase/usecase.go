@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/dtos"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/mapper"
@@ -20,14 +21,26 @@ func NewUsecase(logger *logger.Logger, userRepository user.Repository) user.Usec
 }
 
 func (uc *userUsecase) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) (*dtos.User, error) {
+	// Set error for unexpected internal errors
+	internalErr := errs.NewAppError(errs.ErrInternal, "failed to create user")
+
 	// Check if user already exists based on email or username
-	if _, err := uc.userRepository.GetUserByEmailOrUsername(ctx, input.Email, input.Username); err == nil {
-		return nil, errs.NewAppError(errs.ErrEntityExists, "user with given email or username already exists")
+	res, err := uc.userRepository.GetUserByEmailOrUsername(ctx, input.Email, input.Username)
+	if err != nil {
+		uc.logger.Error("failed to get user", "error", err.Error())
+		return nil, internalErr
+	}
+
+	// Return an error if user already exists
+	if res.ID != uuid.Nil {
+		uc.logger.Error("user already exists", "email", input.Email, "username", input.Username)
+		return nil, errs.NewAppError(errs.ErrEntityExists, "user with same email or username already exists")
 	}
 
 	user, err := uc.userRepository.CreateUser(ctx, mapper.CreateUserRequestToUserModel(input))
 	if err != nil {
-		return nil, errs.NewAppError(errs.ErrInternal, "failed to create user")
+		uc.logger.Error("failed to create user", "error", err.Error())
+		return nil, internalErr
 	}
 
 	return mapper.UserModelToUser(user), nil
