@@ -2,11 +2,13 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/gthomas08/realworld-huma/internal/db/postgres"
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/go-jet/jet/v2/qrm"
 	. "github.com/gthomas08/realworld-huma/internal/db/postgres/jet/postgres/public/table"
 
 	"github.com/gthomas08/realworld-huma/internal/db/postgres/jet/postgres/public/model"
@@ -29,6 +31,9 @@ func (r *repository) GetUserByEmailOrUsername(ctx context.Context, email string,
 		LIMIT(1)
 
 	err := stmt.QueryContext(ctx, r.db.Conn, &user)
+	if errors.Is(err, qrm.ErrNoRows) {
+		return nil, nil
+	}
 
 	return &user, err
 }
