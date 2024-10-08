@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/dtos"
@@ -20,23 +21,18 @@ func NewUsecase(logger *logger.Logger, userRepository user.Repository) user.Usec
 }
 
 func (uc *userUsecase) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) (*dtos.User, error) {
-	internalErr := errs.NewAppError(errs.ErrInternal, "failed to create user")
+	existingUser, err := uc.userRepository.GetUserByEmailOrUsername(ctx, input.Email, input.Username)
+	if err != nil && !errors.Is(err, errs.ErrNotFound) {
+		return nil, err
+	}
+	if existingUser != nil {
+		return nil, errs.NewAppError(errs.EntityExists, "user with same email or username already exists")
+	}
 
-	exUser, err := uc.userRepository.GetUserByEmailOrUsername(ctx, input.Email, input.Username)
+	newUser, err := uc.userRepository.CreateUser(ctx, mapper.CreateUserRequestToUserModel(input))
 	if err != nil {
-		uc.logger.Error("failed to get user", "error", err.Error())
-		return nil, internalErr
-	}
-	if exUser != nil {
-		uc.logger.Error("user already exists", "email", input.Email, "username", input.Username)
-		return nil, errs.NewAppError(errs.ErrEntityExists, "user with same email or username already exists")
+		return nil, err
 	}
 
-	user, err := uc.userRepository.CreateUser(ctx, mapper.CreateUserRequestToUserModel(input))
-	if err != nil {
-		uc.logger.Error("failed to create user", "error", err.Error())
-		return nil, internalErr
-	}
-
-	return mapper.UserModelToUser(user), nil
+	return mapper.UserModelToUser(newUser), nil
 }

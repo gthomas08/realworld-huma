@@ -6,6 +6,7 @@ import (
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/dtos"
 	"github.com/gthomas08/realworld-huma/internal/utils/types"
+	"github.com/gthomas08/realworld-huma/pkg/errs"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
@@ -25,7 +26,8 @@ type CreateUserResponse struct {
 func (h *userHandler) CreateUser(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[CreateUserResponse], error) {
 	createdUser, err := h.userUsecase.CreateUser(ctx, &input.Body)
 	if err != nil {
-		return nil, err
+		h.logger.Error("failed to create user", "error", err.Error())
+		return nil, errs.ResolveError(err)
 	}
 
 	resp := &types.ResponseBody[CreateUserResponse]{

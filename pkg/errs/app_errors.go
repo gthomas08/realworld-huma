@@ -1,11 +1,15 @@
 package errs
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/danielgtaylor/huma/v2"
+)
 
 type AppError int
 
 const (
-	ErrEntityExists AppError = iota + 4000
+	EntityExists AppError = iota + 4000
 )
 
 func (ae AppError) String() string {
@@ -17,9 +21,18 @@ func (ae AppError) HTTPStatus() int {
 }
 
 var appCodeNames = [...]string{
-	ErrEntityExists: "entity_exists",
+	EntityExists: "entity_exists",
 }
 
 var appCodeStatus = [...]int{
-	ErrEntityExists: http.StatusConflict,
+	EntityExists: http.StatusConflict,
+}
+
+// NewAppError returns an error with the specified error code and message.
+func NewAppError(appErr AppError, message string) huma.StatusError {
+	return &ErrorResponse{
+		Status:  appErr.HTTPStatus(),
+		Code:    appErr.String(),
+		Message: message,
+	}
 }

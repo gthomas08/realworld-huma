@@ -1,13 +1,10 @@
 package errs
 
 import (
+	"net/http"
+
 	"github.com/danielgtaylor/huma/v2"
 )
-
-type ApplicationError interface {
-	String() string
-	HTTPStatus() int
-}
 
 // ErrorResponse is the error response returned to the client.
 type ErrorResponse struct {
@@ -40,11 +37,13 @@ func NewError(status int, message string, errs ...error) huma.StatusError {
 	}
 }
 
-// NewAppError returns an error with the specified error code and message.
-func NewAppError(appErr ApplicationError, message string) huma.StatusError {
-	return &ErrorResponse{
-		Status:  appErr.HTTPStatus(),
-		Code:    appErr.String(),
-		Message: message,
+// ResolveError takes an error and resolves it to a huma.StatusError.
+//
+// If the error is already an *ErrorResponse, it is returned as is.
+// Otherwise, it returns an error with a status code of 500 and the message "internal server error".
+func ResolveError(err error) huma.StatusError {
+	if e, ok := err.(*ErrorResponse); ok {
+		return e
 	}
+	return NewError(http.StatusInternalServerError, "internal server error")
 }
