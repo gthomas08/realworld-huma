@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/gthomas08/realworld-huma/internal/db/postgres"
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
@@ -28,13 +29,12 @@ func (r *repository) GetUserByEmailOrUsername(ctx context.Context, email string,
 
 	stmt := SELECT(Users.ID, Users.Username, Users.Email, Users.Bio, Users.Image).
 		FROM(Users).
-		WHERE(OR(Users.Email.EQ(String(email)), Users.Username.EQ(String(username)))).
-		LIMIT(1)
+		WHERE(OR(Users.Email.EQ(String(email)), Users.Username.EQ(String(username))))
 
 	err := stmt.QueryContext(ctx, r.db.Conn, &user)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
-			return nil, errs.ErrNotFound
+			return nil, fmt.Errorf("user %w", errs.ErrNotFound)
 		}
 		return nil, err
 	}

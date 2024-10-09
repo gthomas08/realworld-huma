@@ -3,5 +3,5 @@ package errs
 import "errors"
 
 var (
-	ErrNotFound = errors.New("entity not found")
+	ErrNotFound = errors.New("not found")
 )

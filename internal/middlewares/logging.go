@@ -40,7 +40,7 @@ func RecoverMiddleware(api huma.API, logger *logger.Logger) func(ctx huma.Contex
 	return func(ctx huma.Context, next func(huma.Context)) {
 		defer func() {
 			if rec := recover(); rec != nil {
-				logger.Error("request failed", "error", rec, "endpoint", ctx.Operation().Path, "method", ctx.Operation().Method)
+				logger.Error("request failed", "error", rec)
 				log.Print(string(debug.Stack()))
 				huma.WriteErr(api, ctx, http.StatusInternalServerError, "internal server error")
 				return
