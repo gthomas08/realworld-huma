@@ -17,3 +17,8 @@ type CreateUserRequest struct {
 	Email    string `json:"email" format:"email" doc:"The email of the user"`
 	Password string `json:"password" example:"password" doc:"Password of the user"`
 }
+
+type LoginRequest struct {
+	Email    string `json:"email" format:"email" doc:"The email of the user"`
+	Password string `json:"password" example:"password" doc:"Password of the user"`
+}

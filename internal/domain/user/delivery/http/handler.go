@@ -19,20 +19,36 @@ func NewHandler(logger *logger.Logger, userUsecase user.Usecase) *userHandler {
 	return &userHandler{logger: logger, userUsecase: userUsecase}
 }
 
-type CreateUserResponse struct {
-	User *dtos.User `json:"user" doc:"The created user"`
+type UserResponse struct {
+	User *dtos.User `json:"user" doc:"The user"`
 }
 
-func (h *userHandler) CreateUser(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[CreateUserResponse], error) {
-	createdUser, err := h.userUsecase.CreateUser(ctx, &input.Body)
+func (h *userHandler) CreateUser(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[UserResponse], error) {
+	user, err := h.userUsecase.CreateUser(ctx, &input.Body)
 	if err != nil {
 		h.logger.Error("failed to create user", "error", err.Error())
 		return nil, errs.ResolveError(err)
 	}
 
-	resp := &types.ResponseBody[CreateUserResponse]{
-		Body: CreateUserResponse{
-			User: createdUser,
+	resp := &types.ResponseBody[UserResponse]{
+		Body: UserResponse{
+			User: user,
+		},
+	}
+
+	return resp, nil
+}
+
+func (h *userHandler) Login(ctx context.Context, input *types.RequestBody[dtos.LoginRequest]) (*types.ResponseBody[UserResponse], error) {
+	user, err := h.userUsecase.Login(ctx, &input.Body)
+	if err != nil {
+		h.logger.Error("failed to login user", "error", err.Error())
+		return nil, errs.ResolveError(err)
+	}
+
+	resp := &types.ResponseBody[UserResponse]{
+		Body: UserResponse{
+			User: user,
 		},
 	}
 

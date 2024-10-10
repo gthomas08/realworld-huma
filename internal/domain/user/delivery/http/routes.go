@@ -14,4 +14,11 @@ func (h *userHandler) RegisterRoutes(api huma.API) {
 		Path:        "/api/users",
 		Summary:     "Registers a new user",
 	}, h.CreateUser)
+
+	huma.Register(api, huma.Operation{
+		OperationID: "login-user",
+		Method:      http.MethodPost,
+		Path:        "/api/users/login",
+		Summary:     "Logs in a user",
+	}, h.Login)
 }

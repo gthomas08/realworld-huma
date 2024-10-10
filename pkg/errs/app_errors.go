@@ -9,7 +9,8 @@ import (
 type AppError int
 
 const (
-	EntityExists AppError = iota + 4000
+	InvalidCredentials AppError = iota + 4000
+	EntityExists
 )
 
 func (ae AppError) String() string {
@@ -21,11 +22,13 @@ func (ae AppError) HTTPStatus() int {
 }
 
 var appCodeNames = [...]string{
-	EntityExists: "entity_exists",
+	InvalidCredentials: "invalid_credentials",
+	EntityExists:       "entity_exists",
 }
 
 var appCodeStatus = [...]int{
-	EntityExists: http.StatusConflict,
+	InvalidCredentials: http.StatusUnauthorized,
+	EntityExists:       http.StatusConflict,
 }
 
 // NewAppError returns an error with the specified error code and message.

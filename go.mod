@@ -7,6 +7,7 @@ require (
 	github.com/go-jet/jet/v2 v2.11.1
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
+	golang.org/x/crypto v0.22.0
 )
 
 require (
@@ -33,7 +34,6 @@ require (
 	github.com/x448/float16 v0.8.4 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/crypto v0.22.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
