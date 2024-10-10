@@ -23,8 +23,8 @@ type UserResponse struct {
 	User *dtos.User `json:"user" doc:"The user"`
 }
 
-func (h *userHandler) CreateUser(ctx context.Context, input *types.RequestBody[dtos.CreateUserRequest]) (*types.ResponseBody[UserResponse], error) {
-	user, err := h.userUsecase.CreateUser(ctx, &input.Body)
+func (h *userHandler) RegisterUser(ctx context.Context, input *types.RequestBody[dtos.RegisterUserRequest]) (*types.ResponseBody[UserResponse], error) {
+	user, err := h.userUsecase.RegisterUser(ctx, &input.Body)
 	if err != nil {
 		h.logger.Error("failed to create user", "error", err.Error())
 		return nil, errs.ResolveError(err)

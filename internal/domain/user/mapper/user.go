@@ -6,7 +6,7 @@ import (
 	"github.com/gthomas08/realworld-huma/internal/domain/user/dtos"
 )
 
-func CreateUserRequestToUserModel(user *dtos.CreateUserRequest) *model.Users {
+func RegisterUserRequestToUserModel(user *dtos.RegisterUserRequest) *model.Users {
 	return &model.Users{
 		ID:       uuid.New(),
 		Username: user.Username,

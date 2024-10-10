@@ -12,7 +12,7 @@ type User struct {
 	Image    *string   `json:"image" required:"false" format:"uri" doc:"The image of the user"`
 }
 
-type CreateUserRequest struct {
+type RegisterUserRequest struct {
 	Username string `json:"username" example:"johndoe" doc:"The username of the user"`
 	Email    string `json:"email" format:"email" doc:"The email of the user"`
 	Password string `json:"password" example:"password" doc:"Password of the user"`

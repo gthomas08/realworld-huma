@@ -21,28 +21,6 @@ func NewUsecase(logger *logger.Logger, userRepository user.Repository) user.Usec
 	return &userUsecase{logger: logger, userRepository: userRepository}
 }
 
-func (uc *userUsecase) CreateUser(ctx context.Context, input *dtos.CreateUserRequest) (*dtos.User, error) {
-	existingUser, err := uc.userRepository.GetUserByEmailOrUsername(ctx, input.Email, input.Username)
-	if err != nil && !errors.Is(err, errs.ErrNotFound) {
-		return nil, err
-	}
-	if existingUser != nil {
-		return nil, errs.NewAppError(errs.EntityExists, "user with same email or username already exists")
-	}
-
-	input.Password, err = crypt.HashPassword(input.Password)
-	if err != nil {
-		return nil, err
-	}
-
-	newUser, err := uc.userRepository.CreateUser(ctx, mapper.CreateUserRequestToUserModel(input))
-	if err != nil {
-		return nil, err
-	}
-
-	return mapper.UserModelToUser(newUser), nil
-}
-
 func (uc *userUsecase) Login(ctx context.Context, input *dtos.LoginRequest) (*dtos.User, error) {
 	user, err := uc.userRepository.GetUserByEmail(ctx, input.Email)
 	if err != nil {
@@ -57,4 +35,26 @@ func (uc *userUsecase) Login(ctx context.Context, input *dtos.LoginRequest) (*dt
 	}
 
 	return mapper.UserModelToUser(user), nil
+}
+
+func (uc *userUsecase) RegisterUser(ctx context.Context, input *dtos.RegisterUserRequest) (*dtos.User, error) {
+	existingUser, err := uc.userRepository.GetUserByEmailOrUsername(ctx, input.Email, input.Username)
+	if err != nil && !errors.Is(err, errs.ErrNotFound) {
+		return nil, err
+	}
+	if existingUser != nil {
+		return nil, errs.NewAppError(errs.EntityExists, "user with same email or username already exists")
+	}
+
+	input.Password, err = crypt.HashPassword(input.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	newUser, err := uc.userRepository.CreateUser(ctx, mapper.RegisterUserRequestToUserModel(input))
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.UserModelToUser(newUser), nil
 }
