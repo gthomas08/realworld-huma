@@ -25,16 +25,16 @@ func (uc *userUsecase) Login(ctx context.Context, input *dtos.LoginRequest) (*dt
 	user, err := uc.userRepository.GetUserByEmail(ctx, input.Email)
 	if err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
-			return nil, errs.NewAppError(errs.InvalidCredentials, "invalid credentials")
+			return nil, errs.NewAppError(errs.InvalidCredentials, "invalid email")
 		}
 		return nil, err
 	}
 
 	if !crypt.CheckPasswordHash(input.Password, user.Password) {
-		return nil, errs.NewAppError(errs.InvalidCredentials, "invalid credentials")
+		return nil, errs.NewAppError(errs.InvalidCredentials, "invalid password")
 	}
 
-	return mapper.UserModelToUser(user), nil
+	return mapper.UserToUser(user), nil
 }
 
 func (uc *userUsecase) RegisterUser(ctx context.Context, input *dtos.RegisterUserRequest) (*dtos.User, error) {
@@ -51,10 +51,10 @@ func (uc *userUsecase) RegisterUser(ctx context.Context, input *dtos.RegisterUse
 		return nil, err
 	}
 
-	newUser, err := uc.userRepository.CreateUser(ctx, mapper.RegisterUserRequestToUserModel(input))
+	newUser, err := uc.userRepository.CreateUser(ctx, mapper.RegisterUserRequestToUser(input))
 	if err != nil {
 		return nil, err
 	}
 
-	return mapper.UserModelToUser(newUser), nil
+	return mapper.UserToUser(newUser), nil
 }
