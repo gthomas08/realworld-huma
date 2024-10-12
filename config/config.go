@@ -15,6 +15,7 @@ type (
 		App      AppConfig      // App holds the configuration related to the application.
 		Server   ServerConfig   // Server holds the configuration related to the server.
 		Database DatabaseConfig // Database holds the configuration related to the database.
+		JWT      JWTConfig      // JWT holds the configuration related to the JWT token.
 	}
 
 	// AppConfig holds the configuration related to the application settings.
@@ -36,6 +37,13 @@ type (
 		Name     string // Name is the name of the database.
 		User     string // User is the database user.
 		Password string // Password is the database password.
+	}
+
+	// JWTConfig holds the configuration for the JWT token.
+	JWTConfig struct {
+		Key     string // Key is the key used to sign the JWT token.
+		Expired int    // Expired is the expiration time of the JWT token.
+		Label   string // Label is the label of the JWT token.
 	}
 )
 

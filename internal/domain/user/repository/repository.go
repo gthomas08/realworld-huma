@@ -20,7 +20,9 @@ type repository struct {
 }
 
 func NewRepository(db *postgres.DB) user.Repository {
-	return &repository{db: db}
+	return &repository{
+		db: db,
+	}
 }
 
 func (r *repository) GetUserByEmail(ctx context.Context, email string) (*model.Users, error) {

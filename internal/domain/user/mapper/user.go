@@ -15,12 +15,13 @@ func RegisterUserRequestToUser(user *dtos.RegisterUserRequest) *model.Users {
 	}
 }
 
-func UserToUser(user *model.Users) *dtos.User {
+func UserWithTokenToUser(user *model.Users, token string) *dtos.User {
 	return &dtos.User{
 		ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
 		Bio:      user.Bio,
 		Image:    user.Image,
+		Token:    token,
 	}
 }

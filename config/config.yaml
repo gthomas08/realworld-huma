@@ -12,3 +12,8 @@ Database:
   Name: postgres
   User: admin
   Password: root
+
+JWT:
+  Key: RealWorld
+  Expired: 60
+  Label: RealWorld

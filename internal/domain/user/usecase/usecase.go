@@ -4,21 +4,28 @@ import (
 	"context"
 	"errors"
 
+	"github.com/gthomas08/realworld-huma/config"
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/dtos"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/mapper"
 	"github.com/gthomas08/realworld-huma/pkg/crypt"
 	"github.com/gthomas08/realworld-huma/pkg/errs"
+	"github.com/gthomas08/realworld-huma/pkg/jwtkit"
 	"github.com/gthomas08/realworld-huma/pkg/logger"
 )
 
 type userUsecase struct {
+	cfg            *config.Config
 	logger         *logger.Logger
 	userRepository user.Repository
 }
 
-func NewUsecase(logger *logger.Logger, userRepository user.Repository) user.Usecase {
-	return &userUsecase{logger: logger, userRepository: userRepository}
+func NewUsecase(cfg *config.Config, logger *logger.Logger, userRepository user.Repository) user.Usecase {
+	return &userUsecase{
+		cfg:            cfg,
+		logger:         logger,
+		userRepository: userRepository,
+	}
 }
 
 func (uc *userUsecase) Login(ctx context.Context, input *dtos.LoginRequest) (*dtos.User, error) {
@@ -34,7 +41,12 @@ func (uc *userUsecase) Login(ctx context.Context, input *dtos.LoginRequest) (*dt
 		return nil, errs.NewAppError(errs.InvalidCredentials, "invalid password")
 	}
 
-	return mapper.UserToUser(user), nil
+	token, err := jwtkit.GenerateToken(uc.cfg.App.Name, user.ID.String(), uc.cfg.JWT.Key, uc.cfg.JWT.Expired)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.UserWithTokenToUser(user, token), nil
 }
 
 func (uc *userUsecase) RegisterUser(ctx context.Context, input *dtos.RegisterUserRequest) (*dtos.User, error) {
@@ -56,5 +68,10 @@ func (uc *userUsecase) RegisterUser(ctx context.Context, input *dtos.RegisterUse
 		return nil, err
 	}
 
-	return mapper.UserToUser(newUser), nil
+	token, err := jwtkit.GenerateToken(uc.cfg.App.Name, newUser.ID.String(), uc.cfg.JWT.Key, uc.cfg.JWT.Expired)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.UserWithTokenToUser(newUser, token), nil
 }

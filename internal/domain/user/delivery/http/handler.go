@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 
+	"github.com/gthomas08/realworld-huma/config"
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/dtos"
 	"github.com/gthomas08/realworld-huma/internal/utils/types"
@@ -11,12 +12,17 @@ import (
 )
 
 type userHandler struct {
+	cfg         *config.Config
 	logger      *logger.Logger
 	userUsecase user.Usecase
 }
 
-func NewHandler(logger *logger.Logger, userUsecase user.Usecase) *userHandler {
-	return &userHandler{logger: logger, userUsecase: userUsecase}
+func NewHandler(cfg *config.Config, logger *logger.Logger, userUsecase user.Usecase) *userHandler {
+	return &userHandler{
+		cfg:         cfg,
+		logger:      logger,
+		userUsecase: userUsecase,
+	}
 }
 
 type UserResponse struct {
