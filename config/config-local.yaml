@@ -15,5 +15,5 @@ Database:
 
 JWT:
   Key: RealWorld
-  Expired: 60
+  Expired: 3600
   Label: RealWorld

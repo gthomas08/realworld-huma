@@ -17,11 +17,11 @@ func NewPingHandler(logger *logger.Logger, pingUsecase ping.Usecase) *pingHandle
 }
 
 func (ph *pingHandler) GetPingMessage(ctx context.Context, input *struct{}) string {
-	// panic("implement me")
-	// dereference nil pointer
+	// // panic("implement me")
+	// // dereference nil pointer
 
-	var wow *int = nil
-	print(*wow)
+	// var wow *int = nil
+	// print(*wow)
 
 	return ph.pingUsecase.GetPingMessage(ctx)
 }

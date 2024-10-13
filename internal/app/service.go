@@ -20,12 +20,39 @@ import (
 func (app *App) routes() *echo.Echo {
 	router := echo.New()
 
-	api := humaecho.New(router, huma.DefaultConfig(app.cfg.App.Name, app.cfg.App.Version))
+	config := huma.DefaultConfig(app.cfg.App.Name, app.cfg.App.Version)
+	// config.DocsPath = "" // Disable default OpenAPI docs setup
+	config.Components.SecuritySchemes = map[string]*huma.SecurityScheme{
+		"bearer": {
+			Type:         "http",
+			Scheme:       "bearer",
+			BearerFormat: "JWT",
+		},
+	}
+
+	api := humaecho.New(router, config)
+
 	api.UseMiddleware(
 		middlewares.LoggerMiddleware(app.logger),
 		middlewares.RecoverMiddleware(api, app.logger),
+		middlewares.AuthMiddleware(api, app.cfg.JWT.Key),
 	)
 	huma.NewError = errs.NewError
+
+	// router.GET("/docs", func(c echo.Context) error {
+	// 	return c.HTML(http.StatusOK, `<!doctype html>
+	// 	<html>
+	// 	  <head>
+	// 		<title>API Reference</title>
+	// 		<meta charset="utf-8" />
+	// 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	// 	  </head>
+	// 	  <body>
+	// 		<script id="api-reference" data-url="/openapi.json"></script>
+	// 		<script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+	// 	  </body>
+	// 	</html>`)
+	// })
 
 	pingRepo := pingRepository.NewPingRepository(app.db)
 	pingUc := pingUsecase.NewPingUsecase(pingRepo)

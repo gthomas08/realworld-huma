@@ -20,6 +20,9 @@ func (ph *pingHandler) RegisterPingRoutes(api huma.API) {
 		Method:      http.MethodGet,
 		Path:        "/v1/ping",
 		Summary:     "Gets ping message",
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	},
 		func(ctx context.Context, input *struct{}) (*PingResponse, error) {
 			resp := PingResponse{}
