@@ -60,14 +60,14 @@ func LoadConfig(filename string) (*Config, error) {
 
 	// Read the configuration file.
 	if err := v.ReadInConfig(); err != nil {
-		fmt.Printf("Error reading config file: %v\n", err)
+		fmt.Printf("failed to read config file: %v\n", err)
 		return &Config{}, err
 	}
 
 	// Unmarshal the configuration into the Config struct.
 	var config Config
 	if err := v.Unmarshal(&config); err != nil {
-		fmt.Printf("Error unmarshaling config: %v\n", err)
+		fmt.Printf("failed to unmarshal config: %v\n", err)
 		return &Config{}, err
 	}
 
