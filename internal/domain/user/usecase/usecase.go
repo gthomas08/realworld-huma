@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/gthomas08/realworld-huma/config"
+	"github.com/gthomas08/realworld-huma/internal/app_context"
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/dtos"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/mapper"
@@ -28,6 +29,19 @@ func NewUsecase(cfg *config.Config, logger *logger.Logger, userRepository user.R
 	}
 }
 
+func (uc *userUsecase) GetCurrentUser(ctx context.Context) (*dtos.User, error) {
+	userClaim, err := app_context.GetUserContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	token, err := app_context.GetJWTContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.UserClaimWithTokenToUser(userClaim, token), nil
+}
+
 func (uc *userUsecase) Login(ctx context.Context, input *dtos.LoginRequest) (*dtos.User, error) {
 	user, err := uc.userRepository.GetUserByEmail(ctx, input.Email)
 	if err != nil {
@@ -41,7 +55,15 @@ func (uc *userUsecase) Login(ctx context.Context, input *dtos.LoginRequest) (*dt
 		return nil, errs.NewAppError(errs.InvalidCredentials, "invalid password")
 	}
 
-	token, err := jwtkit.GenerateToken(uc.cfg.App.Name, user.ID.String(), uc.cfg.JWT.Key, uc.cfg.JWT.Expired)
+	claims := &jwtkit.UserClaim{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		Bio:      user.Bio,
+		Image:    user.Image,
+	}
+
+	token, err := jwtkit.GenerateToken(uc.cfg.App.Name, user.ID.String(), uc.cfg.JWT.Key, uc.cfg.JWT.Expired, claims)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +90,15 @@ func (uc *userUsecase) RegisterUser(ctx context.Context, input *dtos.RegisterUse
 		return nil, err
 	}
 
-	token, err := jwtkit.GenerateToken(uc.cfg.App.Name, newUser.ID.String(), uc.cfg.JWT.Key, uc.cfg.JWT.Expired)
+	claims := &jwtkit.UserClaim{
+		ID:       newUser.ID,
+		Username: newUser.Username,
+		Email:    newUser.Email,
+		Bio:      newUser.Bio,
+		Image:    newUser.Image,
+	}
+
+	token, err := jwtkit.GenerateToken(uc.cfg.App.Name, newUser.ID.String(), uc.cfg.JWT.Key, uc.cfg.JWT.Expired, claims)
 	if err != nil {
 		return nil, err
 	}

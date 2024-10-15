@@ -9,6 +9,16 @@ import (
 
 func (h *userHandler) RegisterRoutes(api huma.API) {
 	huma.Register(api, huma.Operation{
+		OperationID: "get-user",
+		Method:      http.MethodGet,
+		Path:        "/api/user",
+		Summary:     "Gets current user",
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
+	}, h.GetCurrentUser)
+
+	huma.Register(api, huma.Operation{
 		OperationID: "login-user",
 		Method:      http.MethodPost,
 		Path:        "/api/users/login",

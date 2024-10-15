@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/danielgtaylor/huma/v2"
+	"github.com/gthomas08/realworld-huma/internal/app_context"
 	"github.com/gthomas08/realworld-huma/pkg/jwtkit"
 )
 
@@ -28,15 +29,30 @@ func AuthMiddleware(api huma.API, secretKey string) func(ctx huma.Context, next 
 
 		token := strings.TrimPrefix(ctx.Header("Authorization"), "Bearer ")
 		if len(token) == 0 {
-			huma.WriteErr(api, ctx, http.StatusUnauthorized, "unauthorized")
+			huma.WriteErr(api, ctx, http.StatusUnauthorized, "no token provided")
 			return
 		}
 
-		_, err := jwtkit.ValidateToken(token, secretKey)
+		validatedToken, err := jwtkit.ValidateToken(token, secretKey)
 		if err != nil {
 			huma.WriteErr(api, ctx, http.StatusUnauthorized, "unauthorized")
 			return
 		}
+
+		user, exists := validatedToken.Get("user")
+		if !exists {
+			huma.WriteErr(api, ctx, http.StatusUnauthorized, "user claim not found")
+			return
+		}
+
+		userClaim, err := jwtkit.ParseUserClaim(user)
+		if err != nil {
+			huma.WriteErr(api, ctx, http.StatusUnauthorized, "invalid user claim")
+			return
+		}
+
+		ctx = app_context.SetUserContext(ctx, userClaim)
+		ctx = app_context.SetJWTContext(ctx, token)
 
 		next(ctx)
 	}

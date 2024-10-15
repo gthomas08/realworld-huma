@@ -29,10 +29,10 @@ type UserResponse struct {
 	User *dtos.User `json:"user" doc:"The user"`
 }
 
-func (h *userHandler) RegisterUser(ctx context.Context, input *types.RequestBody[dtos.RegisterUserRequest]) (*types.ResponseBody[UserResponse], error) {
-	user, err := h.userUsecase.RegisterUser(ctx, &input.Body)
+func (h *userHandler) GetCurrentUser(ctx context.Context, input *struct{}) (*types.ResponseBody[UserResponse], error) {
+	user, err := h.userUsecase.GetCurrentUser(ctx)
 	if err != nil {
-		h.logger.Error("failed to create user", "error", err.Error())
+		h.logger.Error("failed to get current user", "error", err.Error())
 		return nil, errs.ResolveError(err)
 	}
 
@@ -49,6 +49,22 @@ func (h *userHandler) Login(ctx context.Context, input *types.RequestBody[dtos.L
 	user, err := h.userUsecase.Login(ctx, &input.Body)
 	if err != nil {
 		h.logger.Error("failed to login user", "error", err.Error())
+		return nil, errs.ResolveError(err)
+	}
+
+	resp := &types.ResponseBody[UserResponse]{
+		Body: UserResponse{
+			User: user,
+		},
+	}
+
+	return resp, nil
+}
+
+func (h *userHandler) RegisterUser(ctx context.Context, input *types.RequestBody[dtos.RegisterUserRequest]) (*types.ResponseBody[UserResponse], error) {
+	user, err := h.userUsecase.RegisterUser(ctx, &input.Body)
+	if err != nil {
+		h.logger.Error("failed to create user", "error", err.Error())
 		return nil, errs.ResolveError(err)
 	}
 
