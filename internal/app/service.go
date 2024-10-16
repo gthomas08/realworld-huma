@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/gthomas08/realworld-huma/internal/middlewares"
+	"github.com/gthomas08/realworld-huma/internal/utils/security"
 	"github.com/gthomas08/realworld-huma/pkg/errs"
 
 	pingHttp "github.com/gthomas08/realworld-huma/internal/domain/ping/delivery/http"
@@ -19,18 +20,16 @@ import (
 
 func (app *App) routes() *echo.Echo {
 	router := echo.New()
+	apiGroup := router.Group("/api")
 
 	config := huma.DefaultConfig(app.cfg.App.Name, app.cfg.App.Version)
-	// config.DocsPath = "" // Disable default OpenAPI docs setup
-	config.Components.SecuritySchemes = map[string]*huma.SecurityScheme{
-		"bearer": {
-			Type:         "http",
-			Scheme:       "bearer",
-			BearerFormat: "JWT",
-		},
+	config.Servers = []*huma.Server{
+		{URL: "/api"},
 	}
+	// config.DocsPath = "" // Disable default OpenAPI docs setup
+	config.Components.SecuritySchemes = security.GetSecuritySchemes()
 
-	api := humaecho.New(router, config)
+	api := humaecho.NewWithGroup(router, apiGroup, config)
 
 	api.UseMiddleware(
 		middlewares.LoggerMiddleware(app.logger),
