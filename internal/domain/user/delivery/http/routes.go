@@ -5,6 +5,7 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	_ "github.com/danielgtaylor/huma/v2/formats/cbor"
+	"github.com/gthomas08/realworld-huma/internal/utils/security"
 )
 
 func (h *userHandler) RegisterRoutes(api huma.API) {
@@ -13,9 +14,7 @@ func (h *userHandler) RegisterRoutes(api huma.API) {
 		Method:      http.MethodGet,
 		Path:        "/api/user",
 		Summary:     "Gets current user",
-		Security: []map[string][]string{
-			{"bearer": {}},
-		},
+		Security:    security.RequireAuth(security.Bearer),
 	}, h.GetCurrentUser)
 
 	huma.Register(api, huma.Operation{
