@@ -30,4 +30,12 @@ func (h *userHandler) RegisterRoutes(api huma.API) {
 		Path:        "/api/users",
 		Summary:     "Registers a new user",
 	}, h.RegisterUser)
+
+	huma.Register(api, huma.Operation{
+		OperationID: "update-user",
+		Method:      http.MethodPut,
+		Path:        "/api/user",
+		Summary:     "Updates current users email",
+		Security:    security.RequireAuth(security.Bearer),
+	}, h.UpdateUser)
 }

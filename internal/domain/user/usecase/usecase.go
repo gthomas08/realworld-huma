@@ -105,3 +105,35 @@ func (uc *userUsecase) RegisterUser(ctx context.Context, input *dtos.RegisterUse
 
 	return mapper.UserWithTokenToUser(newUser, token), nil
 }
+
+func (uc *userUsecase) UpdateUser(ctx context.Context, input *dtos.UpdateUserRequest) (*dtos.User, error) {
+	userClaim, err := ctxkit.GetUserContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := uc.userRepository.GetUserById(ctx, userClaim.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if input.Email == user.Email {
+		return nil, errs.NewAppError(errs.EntityExists, "provided email already in use for the user")
+	}
+
+	user.Email = input.Email
+	user.Bio = input.Bio
+	user.Image = input.Image
+
+	updatedUser, err := uc.userRepository.UpdateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := ctxkit.GetJWTContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.UserWithTokenToUser(updatedUser, token), nil
+}

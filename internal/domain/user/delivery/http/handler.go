@@ -76,3 +76,19 @@ func (h *userHandler) RegisterUser(ctx context.Context, input *types.RequestBody
 
 	return resp, nil
 }
+
+func (h *userHandler) UpdateUser(ctx context.Context, input *types.RequestBody[dtos.UpdateUserRequest]) (*types.ResponseBody[UserResponse], error) {
+	user, err := h.userUsecase.UpdateUser(ctx, &input.Body)
+	if err != nil {
+		h.logger.Error("failed to update users email", "error", err.Error())
+		return nil, errs.ResolveError(err)
+	}
+
+	resp := &types.ResponseBody[UserResponse]{
+		Body: UserResponse{
+			User: user,
+		},
+	}
+
+	return resp, nil
+}

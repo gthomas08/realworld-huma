@@ -23,3 +23,9 @@ type LoginRequest struct {
 	Email    string `json:"email" format:"email" doc:"The email of the user"`
 	Password string `json:"password" example:"password" doc:"Password of the user"`
 }
+
+type UpdateUserRequest struct {
+	Email string  `json:"email" format:"email" doc:"The email of the user"`
+	Bio   *string `json:"bio" required:"false" doc:"The bio of the user"`
+	Image *string `json:"image" required:"false" format:"uri" doc:"The image of the user"`
+}

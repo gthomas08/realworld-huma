@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/gthomas08/realworld-huma/internal/db/postgres"
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 	"github.com/gthomas08/realworld-huma/pkg/errs"
@@ -23,6 +24,24 @@ func NewRepository(db *postgres.DB) user.Repository {
 	return &repository{
 		db: db,
 	}
+}
+
+func (r *repository) GetUserById(ctx context.Context, id uuid.UUID) (*model.Users, error) {
+	var user model.Users
+
+	stmt := SELECT(Users.AllColumns).
+		FROM(Users).
+		WHERE(Users.ID.EQ(UUID(id)))
+
+	err := stmt.QueryContext(ctx, r.db.Conn, &user)
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("user %w by id", errs.ErrNotFound)
+		}
+		return nil, err
+	}
+
+	return &user, err
 }
 
 func (r *repository) GetUserByEmail(ctx context.Context, email string) (*model.Users, error) {
@@ -72,4 +91,18 @@ func (r *repository) CreateUser(ctx context.Context, user *model.Users) (*model.
 	err := insertStmt.QueryContext(ctx, r.db.Conn, &newUser)
 
 	return &newUser, err
+}
+
+func (r *repository) UpdateUser(ctx context.Context, user *model.Users) (*model.Users, error) {
+	var updatedUser model.Users
+
+	updateStmt := Users.
+		UPDATE(Users.AllColumns).
+		MODEL(user).
+		WHERE(Users.ID.EQ(UUID(user.ID))).
+		RETURNING(Users.AllColumns)
+
+	err := updateStmt.QueryContext(ctx, r.db.Conn, &updatedUser)
+
+	return &updatedUser, err
 }
