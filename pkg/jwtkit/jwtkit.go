@@ -50,6 +50,8 @@ func ValidateToken(token string, secretKey string) (jwt.Token, error) {
 	return jwt.Parse([]byte(token), jwt.WithKey(jwa.HS256, []byte(secretKey)))
 }
 
+// ParseUserClaim converts a generic data interface into a UserClaim struct.
+// It marshals the input data to JSON format and then unmarshals it into a UserClaim.
 func ParseUserClaim(data interface{}) (*UserClaim, error) {
 	// Convert the map to JSON
 	jsonData, err := json.Marshal(data)

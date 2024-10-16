@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/gthomas08/realworld-huma/config"
-	"github.com/gthomas08/realworld-huma/internal/app_context"
+	"github.com/gthomas08/realworld-huma/internal/ctxkit"
 	"github.com/gthomas08/realworld-huma/internal/domain/user"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/dtos"
 	"github.com/gthomas08/realworld-huma/internal/domain/user/mapper"
@@ -30,11 +30,11 @@ func NewUsecase(cfg *config.Config, logger *logger.Logger, userRepository user.R
 }
 
 func (uc *userUsecase) GetCurrentUser(ctx context.Context) (*dtos.User, error) {
-	userClaim, err := app_context.GetUserContext(ctx)
+	userClaim, err := ctxkit.GetUserContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-	token, err := app_context.GetJWTContext(ctx)
+	token, err := ctxkit.GetJWTContext(ctx)
 	if err != nil {
 		return nil, err
 	}
