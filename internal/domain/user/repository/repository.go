@@ -62,6 +62,24 @@ func (r *repository) GetUserByEmail(ctx context.Context, email string) (*model.U
 	return &user, err
 }
 
+func (r *repository) GetUserByUsername(ctx context.Context, username string) (*model.Users, error) {
+	var user model.Users
+
+	stmt := SELECT(Users.AllColumns).
+		FROM(Users).
+		WHERE(Users.Username.EQ(String(username)))
+
+	err := stmt.QueryContext(ctx, r.db.Conn, &user)
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("user %w by username", errs.ErrNotFound)
+		}
+		return nil, err
+	}
+
+	return &user, err
+}
+
 func (r *repository) GetUserByEmailOrUsername(ctx context.Context, email string, username string) (*model.Users, error) {
 	var user model.Users
 

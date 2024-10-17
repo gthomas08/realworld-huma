@@ -11,6 +11,7 @@ type AppError int
 const (
 	InvalidCredentials AppError = iota + 4000
 	EntityExists
+	EntityNotFound
 )
 
 func (ae AppError) String() string {
@@ -24,11 +25,13 @@ func (ae AppError) HTTPStatus() int {
 var appCodeNames = [...]string{
 	InvalidCredentials: "invalid_credentials",
 	EntityExists:       "entity_exists",
+	EntityNotFound:     "entity_not_found",
 }
 
 var appCodeStatus = [...]int{
 	InvalidCredentials: http.StatusUnauthorized,
 	EntityExists:       http.StatusConflict,
+	EntityNotFound:     http.StatusNotFound,
 }
 
 // NewAppError returns an error with the specified error code and message.

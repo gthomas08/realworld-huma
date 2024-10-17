@@ -13,9 +13,13 @@ import (
 	pingRepository "github.com/gthomas08/realworld-huma/internal/domain/ping/repository"
 	pingUsecase "github.com/gthomas08/realworld-huma/internal/domain/ping/usecase"
 
-	userHttp "github.com/gthomas08/realworld-huma/internal/domain/user/delivery/http"
+	userHTTP "github.com/gthomas08/realworld-huma/internal/domain/user/delivery/http"
 	userRepository "github.com/gthomas08/realworld-huma/internal/domain/user/repository"
 	userUsecase "github.com/gthomas08/realworld-huma/internal/domain/user/usecase"
+
+	profileHTTP "github.com/gthomas08/realworld-huma/internal/domain/profile/delivery/http"
+	profileRepository "github.com/gthomas08/realworld-huma/internal/domain/profile/repository"
+	profileUsecase "github.com/gthomas08/realworld-huma/internal/domain/profile/usecase"
 )
 
 func (app *App) routes() *echo.Echo {
@@ -59,10 +63,15 @@ func (app *App) routes() *echo.Echo {
 
 	userRepo := userRepository.NewRepository(app.db)
 	userUc := userUsecase.NewUsecase(app.cfg, app.logger, userRepo)
-	userHandler := userHttp.NewHandler(app.cfg, app.logger, userUc)
+	userHandler := userHTTP.NewHandler(app.cfg, app.logger, userUc)
+
+	profileRepo := profileRepository.NewRepository(app.db)
+	profileUc := profileUsecase.NewUsecase(app.cfg, app.logger, profileRepo, userRepo)
+	profileHandler := profileHTTP.NewHandler(app.cfg, app.logger, profileUc)
 
 	pingHandler.RegisterPingRoutes(api)
 	userHandler.RegisterRoutes(api)
+	profileHandler.RegisterRoutes(api)
 
 	return router
 }
