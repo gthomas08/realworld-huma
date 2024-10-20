@@ -20,9 +20,10 @@ func SetUserContext(ctx huma.Context, user *jwtkit.UserClaim) huma.Context {
 }
 
 // GetUserContext retrieves the UserClaim from the provided context.
-func GetUserContext(ctx context.Context) (*jwtkit.UserClaim, error) {
+func GetUserContext(ctx context.Context) (*jwtkit.UserClaim, bool) {
 	val := ctx.Value(UserContextKey)
-	return jwtkit.ParseUserClaim(val)
+	user, ok := val.(*jwtkit.UserClaim)
+	return user, ok
 }
 
 // SetJWTContext adds the provided JWT token to the context.
@@ -31,7 +32,8 @@ func SetJWTContext(ctx huma.Context, token string) huma.Context {
 }
 
 // GetJWTContext retrieves the JWT token from the provided context.
-func GetJWTContext(ctx context.Context) (string, error) {
+func GetJWTContext(ctx context.Context) (string, bool) {
 	val := ctx.Value(JWTContextKey)
-	return val.(string), nil
+	token, ok := val.(string)
+	return token, ok
 }

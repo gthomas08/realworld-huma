@@ -30,13 +30,14 @@ func NewUsecase(cfg *config.Config, logger *logger.Logger, userRepository user.R
 }
 
 func (uc *userUsecase) GetCurrentUser(ctx context.Context) (*dtos.User, error) {
-	userClaim, err := ctxkit.GetUserContext(ctx)
-	if err != nil {
-		return nil, err
+	userClaim, exists := ctxkit.GetUserContext(ctx)
+	if !exists {
+		return nil, errs.NewAppError(errs.EntityNotFound, "current user not found")
 	}
-	token, err := ctxkit.GetJWTContext(ctx)
-	if err != nil {
-		return nil, err
+
+	token, exists := ctxkit.GetJWTContext(ctx)
+	if !exists {
+		return nil, errs.NewAppError(errs.EntityNotFound, "token not found")
 	}
 
 	return mapper.UserClaimWithTokenToUser(userClaim, token), nil
@@ -107,9 +108,9 @@ func (uc *userUsecase) RegisterUser(ctx context.Context, input *dtos.RegisterUse
 }
 
 func (uc *userUsecase) UpdateUser(ctx context.Context, input *dtos.UpdateUserRequest) (*dtos.User, error) {
-	userClaim, err := ctxkit.GetUserContext(ctx)
-	if err != nil {
-		return nil, err
+	userClaim, exists := ctxkit.GetUserContext(ctx)
+	if !exists {
+		return nil, errs.NewAppError(errs.EntityNotFound, "current user not found")
 	}
 
 	user, err := uc.userRepository.GetUserById(ctx, userClaim.ID)
@@ -130,9 +131,9 @@ func (uc *userUsecase) UpdateUser(ctx context.Context, input *dtos.UpdateUserReq
 		return nil, err
 	}
 
-	token, err := ctxkit.GetJWTContext(ctx)
-	if err != nil {
-		return nil, err
+	token, exists := ctxkit.GetJWTContext(ctx)
+	if !exists {
+		return nil, errs.NewAppError(errs.EntityNotFound, "token not found")
 	}
 
 	return mapper.UserWithTokenToUser(updatedUser, token), nil

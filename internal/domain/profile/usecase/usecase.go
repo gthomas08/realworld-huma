@@ -40,27 +40,15 @@ func (u *Usecase) GetProfile(ctx context.Context, username string) (*dtos.Profil
 		return nil, err
 	}
 
-	// Get the user claim from context
-	userClaim, err := ctxkit.GetUserContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	// Determine if the user is following the logged in user
 	isFollowing := false
-	switch {
-	case userClaim == nil:
-		isFollowing = false
-	case user.ID == userClaim.ID:
-		isFollowing = false
-	case user.ID != userClaim.ID:
+
+	// Get the user claim from context
+	userClaim, exists := ctxkit.GetUserContext(ctx)
+	if exists {
 		follow, err := u.profileRepository.GetFollow(ctx, userClaim.ID, user.ID)
 		if err != nil {
-			if errors.Is(err, errs.ErrNotFound) {
-				isFollowing = false
-			} else {
-				return nil, err
-			}
+			return nil, err
 		}
 		if follow != nil {
 			isFollowing = true
