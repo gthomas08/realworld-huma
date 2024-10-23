@@ -26,8 +26,19 @@ func NewRepository(db *postgres.DB) profile.Repository {
 	}
 }
 
-func (r *repository) GetFollow(ctx context.Context, followerID uuid.UUID, followeeID uuid.UUID) (*model.Follows, error) {
+func (r *repository) CreateFollow(ctx context.Context, follows *model.Follows) (*model.Follows, error) {
+	var newFollow model.Follows
 
+	insertStmt := Follows.INSERT(Follows.AllColumns).
+		MODEL(follows).
+		RETURNING(Follows.AllColumns)
+
+	err := insertStmt.QueryContext(ctx, r.db.Conn, &newFollow)
+
+	return &newFollow, err
+}
+
+func (r *repository) GetFollow(ctx context.Context, followerID uuid.UUID, followeeID uuid.UUID) (*model.Follows, error) {
 	var follows model.Follows
 
 	stmt := SELECT(Follows.AllColumns).

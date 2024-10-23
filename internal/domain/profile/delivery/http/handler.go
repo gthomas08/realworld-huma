@@ -46,3 +46,21 @@ func (h *handler) GetProfile(ctx context.Context, input *struct {
 
 	return resp, nil
 }
+
+func (h *handler) FollowUserByUsername(ctx context.Context, input *struct {
+	Username string `path:"username"`
+}) (*types.ResponseBody[ProfileResponse], error) {
+	profile, err := h.profileUsecase.FollowUserByUsername(ctx, input.Username)
+	if err != nil {
+		h.logger.Error("failed to follow user", "error", err.Error())
+		return nil, errs.ResolveError(err)
+	}
+
+	resp := &types.ResponseBody[ProfileResponse]{
+		Body: ProfileResponse{
+			Profile: profile,
+		},
+	}
+
+	return resp, nil
+}

@@ -8,5 +8,7 @@ import (
 )
 
 type Repository interface {
+	CreateFollow(ctx context.Context, follows *model.Follows) (*model.Follows, error)
+
 	GetFollow(ctx context.Context, followerID uuid.UUID, followeeID uuid.UUID) (*model.Follows, error)
 }

@@ -42,7 +42,7 @@ func (app *App) routes() *echo.Echo {
 	)
 	huma.NewError = errs.NewError
 
-	// router.GET("/docs", func(c echo.Context) error {
+	// router.GET("/api/docs", func(c echo.Context) error {
 	// 	return c.HTML(http.StatusOK, `<!doctype html>
 	// 	<html>
 	// 	  <head>
@@ -51,7 +51,7 @@ func (app *App) routes() *echo.Echo {
 	// 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 	// 	  </head>
 	// 	  <body>
-	// 		<script id="api-reference" data-url="/openapi.json"></script>
+	// 		<script id="api-reference" data-url="/api/openapi.json"></script>
 	// 		<script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
 	// 	  </body>
 	// 	</html>`)

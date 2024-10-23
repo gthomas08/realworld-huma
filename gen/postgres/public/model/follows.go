@@ -13,6 +13,6 @@ import (
 
 type Follows struct {
 	ID         uuid.UUID `sql:"primary_key"`
-	FollowerID *uuid.UUID
-	FolloweeID *uuid.UUID
+	FollowerID uuid.UUID
+	FolloweeID uuid.UUID
 }

@@ -30,6 +30,45 @@ func NewUsecase(cfg *config.Config, logger *logger.Logger, profileRepository pro
 	}
 }
 
+func (u *Usecase) FollowUserByUsername(ctx context.Context, username string) (*dtos.Profile, error) {
+	// Get the user claim from context
+	userClaim, exists := ctxkit.GetUserContext(ctx)
+	if !exists {
+		return nil, errs.NewAppError(errs.EntityNotFound, "user claim not found")
+	}
+
+	// Get the user profile
+	user, err := u.userRepository.GetUserByUsername(ctx, username)
+	if err != nil {
+		if errors.Is(err, errs.ErrNotFound) {
+			return nil, errs.NewAppError(errs.EntityNotFound, "user not found")
+		}
+		return nil, err
+	}
+
+	// If the logged in user is the same as the one to follow, return an error
+	if userClaim.ID == user.ID {
+		return nil, errs.NewAppError(errs.InvalidOperation, "user cannot follow theirself")
+	}
+
+	// Create a new follow
+	newFollow := mapper.NewFollow(userClaim.ID, user.ID)
+
+	// Follow the user
+	_, err = u.profileRepository.CreateFollow(ctx, newFollow)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the updated profile
+	profile, err := u.GetProfile(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	return profile, nil
+}
+
 func (u *Usecase) GetProfile(ctx context.Context, username string) (*dtos.Profile, error) {
 	// Get the user profile
 	user, err := u.userRepository.GetUserByUsername(ctx, username)

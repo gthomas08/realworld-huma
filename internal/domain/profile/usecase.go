@@ -7,5 +7,7 @@ import (
 )
 
 type Usecase interface {
+	FollowUserByUsername(ctx context.Context, username string) (*dtos.Profile, error)
+
 	GetProfile(ctx context.Context, username string) (*dtos.Profile, error)
 }

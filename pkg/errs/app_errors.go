@@ -12,6 +12,7 @@ const (
 	InvalidCredentials AppError = iota + 4000
 	EntityExists
 	EntityNotFound
+	InvalidOperation
 )
 
 func (ae AppError) String() string {
@@ -26,12 +27,14 @@ var appCodeNames = [...]string{
 	InvalidCredentials: "invalid_credentials",
 	EntityExists:       "entity_exists",
 	EntityNotFound:     "entity_not_found",
+	InvalidOperation:   "invalid_operation",
 }
 
 var appCodeStatus = [...]int{
 	InvalidCredentials: http.StatusUnauthorized,
 	EntityExists:       http.StatusConflict,
 	EntityNotFound:     http.StatusNotFound,
+	InvalidOperation:   http.StatusConflict,
 }
 
 // NewAppError returns an error with the specified error code and message.
