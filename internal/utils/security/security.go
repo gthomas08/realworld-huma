@@ -13,6 +13,11 @@ func RequireAuth(flow AuthFlow) []map[string][]string {
 	}
 }
 
+// RequireNoAuth returns a security requirement for no authentication.
+func RequireNoAuth() []map[string][]string {
+	return []map[string][]string{}
+}
+
 func GetSecuritySchemes() map[string]*huma.SecurityScheme {
 	return map[string]*huma.SecurityScheme{
 		string(Bearer): {

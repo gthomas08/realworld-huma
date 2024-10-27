@@ -3,9 +3,8 @@ package openapi
 type Tag string
 
 const (
-	AuthTag    Tag = "Auth"
-	UserTag    Tag = "User"
-	ProfileTag Tag = "Profile"
+	UserAndAuthTag Tag = "User and Authentication"
+	ProfileTag     Tag = "Profile"
 )
 
 // AddTags takes a variable number of tags and returns a slice of strings.
