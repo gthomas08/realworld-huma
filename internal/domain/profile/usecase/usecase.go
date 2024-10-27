@@ -69,6 +69,42 @@ func (u *Usecase) FollowUserByUsername(ctx context.Context, username string) (*d
 	return profile, nil
 }
 
+func (u *Usecase) UnfollowUserByUsername(ctx context.Context, username string) (*dtos.Profile, error) {
+	// Get the user claim from context
+	userClaim, exists := ctxkit.GetUserContext(ctx)
+	if !exists {
+		return nil, errs.NewAppError(errs.EntityNotFound, "user claim not found")
+	}
+
+	// Get the user profile
+	user, err := u.userRepository.GetUserByUsername(ctx, username)
+	if err != nil {
+		if errors.Is(err, errs.ErrNotFound) {
+			return nil, errs.NewAppError(errs.EntityNotFound, "user not found")
+		}
+		return nil, err
+	}
+
+	// If the logged in user is the same as the one to unfollow, return an error
+	if userClaim.ID == user.ID {
+		return nil, errs.NewAppError(errs.InvalidOperation, "user cannot unfollow theirself")
+	}
+
+	// Delete the follow
+	err = u.profileRepository.DeleteFollow(ctx, userClaim.ID, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the updated profile
+	profile, err := u.GetProfile(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	return profile, nil
+}
+
 func (u *Usecase) GetProfile(ctx context.Context, username string) (*dtos.Profile, error) {
 	// Get the user profile
 	user, err := u.userRepository.GetUserByUsername(ctx, username)
@@ -86,7 +122,7 @@ func (u *Usecase) GetProfile(ctx context.Context, username string) (*dtos.Profil
 	userClaim, exists := ctxkit.GetUserContext(ctx)
 	if exists {
 		follow, err := u.profileRepository.GetFollow(ctx, userClaim.ID, user.ID)
-		if err != nil {
+		if err != nil && !errors.Is(err, errs.ErrNotFound) {
 			return nil, err
 		}
 		if follow != nil {

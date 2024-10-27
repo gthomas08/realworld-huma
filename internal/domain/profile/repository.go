@@ -9,6 +9,7 @@ import (
 
 type Repository interface {
 	CreateFollow(ctx context.Context, follows *model.Follows) (*model.Follows, error)
+	DeleteFollow(ctx context.Context, followerID uuid.UUID, followeeID uuid.UUID) error
 
 	GetFollow(ctx context.Context, followerID uuid.UUID, followeeID uuid.UUID) (*model.Follows, error)
 }

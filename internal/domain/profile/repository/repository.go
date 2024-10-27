@@ -55,3 +55,12 @@ func (r *repository) GetFollow(ctx context.Context, followerID uuid.UUID, follow
 
 	return &follows, err
 }
+
+func (r *repository) DeleteFollow(ctx context.Context, followerID uuid.UUID, followeeID uuid.UUID) error {
+	stmt := Follows.DELETE().
+		WHERE(AND(Follows.FollowerID.EQ(UUID(followerID)), Follows.FolloweeID.EQ(UUID(followeeID))))
+
+	_, err := stmt.ExecContext(ctx, r.db.Conn)
+
+	return err
+}
