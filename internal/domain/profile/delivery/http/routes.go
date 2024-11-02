@@ -17,7 +17,7 @@ func (h *handler) RegisterRoutes(api huma.API) {
 		Summary:       "Get a profile",
 		Description:   "Get a profile of a user of the system. Auth is optional.",
 		Tags:          openapi.AddTags(openapi.ProfileTag),
-		Security:      security.RequireNoAuth(),
+		Security:      security.Public(),
 		DefaultStatus: http.StatusOK,
 	}, h.GetProfile)
 
@@ -28,7 +28,7 @@ func (h *handler) RegisterRoutes(api huma.API) {
 		Summary:       "Follow a user",
 		Description:   "Follow a user by username",
 		Tags:          openapi.AddTags(openapi.ProfileTag),
-		Security:      security.RequireAuth(security.Bearer),
+		Security:      security.Protected(security.Bearer),
 		DefaultStatus: http.StatusCreated,
 	}, h.FollowUserByUsername)
 
@@ -39,7 +39,7 @@ func (h *handler) RegisterRoutes(api huma.API) {
 		Summary:       "Unfollow a user",
 		Description:   "Unfollow a user by username",
 		Tags:          openapi.AddTags(openapi.ProfileTag),
-		Security:      security.RequireAuth(security.Bearer),
+		Security:      security.Protected(security.Bearer),
 		DefaultStatus: http.StatusNoContent,
 	}, h.UnfollowUserByUsername)
 }

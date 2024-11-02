@@ -6,15 +6,15 @@ type AuthFlow string
 
 const Bearer AuthFlow = "bearer"
 
-// RequireAuth returns a security requirement for a given flow.
-func RequireAuth(flow AuthFlow) []map[string][]string {
+// Protected returns a security requirement for a given flow.
+func Protected(flow AuthFlow) []map[string][]string {
 	return []map[string][]string{
 		{string(flow): {}},
 	}
 }
 
-// RequireNoAuth returns a security requirement for no authentication.
-func RequireNoAuth() []map[string][]string {
+// Public returns a security requirement for no authentication.
+func Public() []map[string][]string {
 	return []map[string][]string{}
 }
 

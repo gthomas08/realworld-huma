@@ -17,7 +17,7 @@ func (h *userHandler) RegisterRoutes(api huma.API) {
 		Summary:       "Existing user login",
 		Description:   "Login for existing user",
 		Tags:          openapi.AddTags(openapi.UserAndAuthTag),
-		Security:      security.RequireNoAuth(),
+		Security:      security.Public(),
 		DefaultStatus: http.StatusOK,
 	}, h.Login)
 
@@ -28,7 +28,7 @@ func (h *userHandler) RegisterRoutes(api huma.API) {
 		Summary:       "Register a new user",
 		Description:   "Register for new user",
 		Tags:          openapi.AddTags(openapi.UserAndAuthTag),
-		Security:      security.RequireNoAuth(),
+		Security:      security.Public(),
 		DefaultStatus: http.StatusCreated,
 	}, h.RegisterUser)
 
@@ -38,7 +38,7 @@ func (h *userHandler) RegisterRoutes(api huma.API) {
 		Path:          "/user",
 		Summary:       "Get current user",
 		Description:   "Gets the currently logged-in user",
-		Security:      security.RequireAuth(security.Bearer),
+		Security:      security.Protected(security.Bearer),
 		Tags:          openapi.AddTags(openapi.UserAndAuthTag),
 		DefaultStatus: http.StatusOK,
 	}, h.GetCurrentUser)
@@ -49,7 +49,7 @@ func (h *userHandler) RegisterRoutes(api huma.API) {
 		Path:          "/user",
 		Summary:       "Update current user",
 		Description:   "Updated user information for current user",
-		Security:      security.RequireAuth(security.Bearer),
+		Security:      security.Protected(security.Bearer),
 		Tags:          openapi.AddTags(openapi.UserAndAuthTag),
 		DefaultStatus: http.StatusOK,
 	}, h.UpdateUser)
