@@ -5,6 +5,7 @@ type Tag string
 const (
 	UserAndAuthTag Tag = "User and Authentication"
 	ProfileTag     Tag = "Profile"
+	TagsTag        Tag = "Tags"
 )
 
 // AddTags takes a variable number of tags and returns a slice of strings.

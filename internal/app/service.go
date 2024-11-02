@@ -20,6 +20,10 @@ import (
 	profileHTTP "github.com/gthomas08/realworld-huma/internal/domain/profile/delivery/http"
 	profileRepository "github.com/gthomas08/realworld-huma/internal/domain/profile/repository"
 	profileUsecase "github.com/gthomas08/realworld-huma/internal/domain/profile/usecase"
+
+	articleHTTP "github.com/gthomas08/realworld-huma/internal/domain/article/delivery/http"
+	articleRepository "github.com/gthomas08/realworld-huma/internal/domain/article/repository"
+	articleUsecase "github.com/gthomas08/realworld-huma/internal/domain/article/usecase"
 )
 
 func (app *App) routes() *echo.Echo {
@@ -69,9 +73,14 @@ func (app *App) routes() *echo.Echo {
 	profileUc := profileUsecase.NewUsecase(app.cfg, app.logger, profileRepo, userRepo)
 	profileHandler := profileHTTP.NewHandler(app.cfg, app.logger, profileUc)
 
+	articleRepo := articleRepository.NewRepository(app.db)
+	articleUc := articleUsecase.NewUsecase(app.cfg, app.logger, articleRepo)
+	articleHandler := articleHTTP.NewHandler(app.cfg, app.logger, articleUc)
+
 	pingHandler.RegisterPingRoutes(api)
 	userHandler.RegisterRoutes(api)
 	profileHandler.RegisterRoutes(api)
+	articleHandler.RegisterRoutes(api)
 
 	return router
 }
