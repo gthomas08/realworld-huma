@@ -11,5 +11,6 @@ package table
 // this method only once at the beginning of the program.
 func UseSchema(schema string) {
 	Follows = Follows.FromSchema(schema)
+	Tags = Tags.FromSchema(schema)
 	Users = Users.FromSchema(schema)
 }
