@@ -9,10 +9,6 @@ import (
 	"github.com/gthomas08/realworld-huma/internal/utils/security"
 	"github.com/gthomas08/realworld-huma/pkg/errs"
 
-	pingHttp "github.com/gthomas08/realworld-huma/internal/domain/ping/delivery/http"
-	pingRepository "github.com/gthomas08/realworld-huma/internal/domain/ping/repository"
-	pingUsecase "github.com/gthomas08/realworld-huma/internal/domain/ping/usecase"
-
 	userHTTP "github.com/gthomas08/realworld-huma/internal/domain/user/delivery/http"
 	userRepository "github.com/gthomas08/realworld-huma/internal/domain/user/repository"
 	userUsecase "github.com/gthomas08/realworld-huma/internal/domain/user/usecase"
@@ -61,10 +57,6 @@ func (app *App) routes() *echo.Echo {
 	// 	</html>`)
 	// })
 
-	pingRepo := pingRepository.NewPingRepository(app.db)
-	pingUc := pingUsecase.NewPingUsecase(pingRepo)
-	pingHandler := pingHttp.NewPingHandler(app.logger, pingUc)
-
 	userRepo := userRepository.NewRepository(app.db)
 	userUc := userUsecase.NewUsecase(app.cfg, app.logger, userRepo)
 	userHandler := userHTTP.NewHandler(app.cfg, app.logger, userUc)
@@ -77,7 +69,6 @@ func (app *App) routes() *echo.Echo {
 	articleUc := articleUsecase.NewUsecase(app.cfg, app.logger, articleRepo)
 	articleHandler := articleHTTP.NewHandler(app.cfg, app.logger, articleUc)
 
-	pingHandler.RegisterPingRoutes(api)
 	userHandler.RegisterRoutes(api)
 	profileHandler.RegisterRoutes(api)
 	articleHandler.RegisterRoutes(api)
