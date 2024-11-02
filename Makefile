@@ -1,3 +1,8 @@
+## run: run the application
+.PHONY: run
+run:
+	go run ./cmd/api
+
 ## jet: run Jet generator 
 .PHONY: jet
 jet:

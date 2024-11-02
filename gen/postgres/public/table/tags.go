@@ -17,8 +17,8 @@ type tagsTable struct {
 	postgres.Table
 
 	// Columns
-	ID  postgres.ColumnString
-	Tag postgres.ColumnString
+	ID   postgres.ColumnString
+	Name postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -60,17 +60,17 @@ func newTagsTable(schemaName, tableName, alias string) *TagsTable {
 func newTagsTableImpl(schemaName, tableName, alias string) tagsTable {
 	var (
 		IDColumn       = postgres.StringColumn("id")
-		TagColumn      = postgres.StringColumn("tag")
-		allColumns     = postgres.ColumnList{IDColumn, TagColumn}
-		mutableColumns = postgres.ColumnList{TagColumn}
+		NameColumn     = postgres.StringColumn("name")
+		allColumns     = postgres.ColumnList{IDColumn, NameColumn}
+		mutableColumns = postgres.ColumnList{NameColumn}
 	)
 
 	return tagsTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:  IDColumn,
-		Tag: TagColumn,
+		ID:   IDColumn,
+		Name: NameColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

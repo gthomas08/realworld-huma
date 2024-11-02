@@ -26,13 +26,13 @@ func NewHandler(cfg *config.Config, logger *logger.Logger, articleUsecase articl
 }
 
 type TagsResponse struct {
-	Tags []dtos.Tag `json:"tags" doc:"The list of tags"`
+	Tags []dtos.Tag `json:"tags" nullable:"false" doc:"The list of available tags"`
 }
 
 func (h *handler) GetTags(ctx context.Context, input *struct{}) (*types.ResponseBody[TagsResponse], error) {
 	tags, err := h.articleUsecase.GetTags(ctx)
 	if err != nil {
-		h.logger.Error("failed to get current article", "error", err.Error())
+		h.logger.Error("failed to get available tags", "error", err.Error())
 		return nil, errs.ResolveError(err)
 	}
 

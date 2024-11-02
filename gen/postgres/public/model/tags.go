@@ -12,6 +12,6 @@ import (
 )
 
 type Tags struct {
-	ID  uuid.UUID `sql:"primary_key"`
-	Tag string
+	ID   uuid.UUID `sql:"primary_key"`
+	Name string
 }

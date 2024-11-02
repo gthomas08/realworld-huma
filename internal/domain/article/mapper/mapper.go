@@ -6,9 +6,9 @@ import (
 )
 
 func TagsToTags(tags []model.Tags) []dtos.Tag {
-	var tagsResponse []dtos.Tag
+	tagsResponse := make([]dtos.Tag, 0, len(tags))
 	for _, tag := range tags {
-		tagsResponse = append(tagsResponse, dtos.Tag(tag.Tag))
+		tagsResponse = append(tagsResponse, dtos.Tag(tag.Name))
 	}
 	return tagsResponse
 }
