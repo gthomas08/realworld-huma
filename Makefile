@@ -1,3 +1,6 @@
+# Variables
+DB_HOST ?= localhost  # Defaults to localhost if not set
+
 ## run: run the application
 .PHONY: run
 run:
@@ -6,9 +9,9 @@ run:
 ## jet: run Jet generator 
 .PHONY: jet
 jet:
-	jet -dsn="postgresql://admin:root@localhost:5432/postgres?sslmode=disable" -path=gen --ignore-tables=goose_db_version
+	jet -dsn="postgresql://admin:root@$$DB_HOST:5432/postgres?sslmode=disable" -path=gen --ignore-tables=goose_db_version
 
 ## migrate: run database migrations
 .PHONY: migrate
 migrate:
-	goose -dir ./migrations postgres "user=admin dbname=postgres password=root sslmode=disable" up
+	goose -dir ./migrations postgres "host=$$DB_HOST user=admin password=root dbname=postgres sslmode=disable" up
